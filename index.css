@@ -1,0 +1,410 @@
+*, *:before, *:after {
+  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+ }
+
+body, body:before, body:after {
+  margin:0;
+  margin-right: 30%;
+}
+html,body {
+  height: 100%;
+  overflow: auto;
+  margin: 0;
+  -webkit-overflow-scrolling: touch;
+}
+div.clickable:hover{
+  background: #c7c7c7;
+}
+div.btn, div.cmd, div.cmdrow, div.cmdfull, div.cmdlong, div.cmdslim, div.cmdhalf {
+  position: relative;
+  float: left;
+  text-align: center;
+  background: #e7e7e7;
+  border: 1px solid black;
+  -webkit-appearance: none;
+  -webkit-border-radius: 0;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
+div.info{
+  background: darkgray;
+}
+
+div.sort{
+  width: 100%;
+  height: 5%;
+  border: 1px solid black;
+}
+
+div.btn {
+  width: 33.3%;
+  height: 9vh;
+}
+#dictionary div.btn{
+  width: 12%;
+  float: right;
+  height: 7%;
+}
+#dictionary div.btn.disabled{
+  border: 1px solid black;
+  color: #e7e7e7;
+}
+div.cmd {
+  width: 25%;
+  height: 8vh;
+}
+div.cmdrow {
+  width: 100%;
+  height: 4.8vh;
+}
+div.cmdfull {
+  width: 100%;
+  height: 8vh;
+}
+div.cmdlong {
+  width: 75%;
+  height: 4.8vh;
+}
+div.cmdslim{
+  width: 25%;
+  height: 4.8vh;
+}
+div.cmdhalf{
+  width: 50%;
+  height: 4.8vh;
+}
+
+div.btn p, div.cmd p, div.cmdslim p, div.cmdhalf p, div.cmdrow p, div.cmdfull p, div.cmdlong p {
+  position: relative;
+  margin:auto;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  cursor: default;
+  font-size:2vmin;
+}
+
+div.btn svg, div.cmd svg, div.cmdslim svg, div.cmdhalf svg, div.cmdrow svg, div.cmdfull svg, div.cmdlong svg, div.sort svg {
+  display: block;
+  margin: 2.5% auto;
+  height: 90%;
+  max-width: 90%;
+  max-height: 90%;
+  cursor: default;
+}
+div.sort svg g text.sym-line {
+  fill: gray !important;
+}
+
+div.cmd.disabled {
+  color: gray;
+}
+div.cmd.disabled svg g text.sym-line{
+  fill: gray !important;
+}
+div.cmd.unselected:hover svg g text.sym-line{
+  fill: black !important;
+}
+div.cmd.selected {
+  background: #b1b1b1;
+  border: 1px solid black;
+  border-top-left-radius: 25%;
+  border-top-right-radius: 25%;
+}
+div.cmd.unselected {
+  background: #ffffff;
+  border: 1px dashed black;
+  border-top-left-radius: 25%;
+  border-top-right-radius: 25%;
+  color: gray;
+}
+div.cmd.unselected:hover {
+  border: 1px solid gray;
+  color: black;
+}
+div.cmd.unselected svg g text.sym-line{
+  fill: gray !important;
+}
+div.cmd.unselected:hover svg g text.sym-line{
+  fill: black !important;
+}
+
+#header {
+  position: relative;
+  top:0px;
+  height: 9vh;
+  width: 30%;
+  padding-left: 2%;
+  background: #f8f8f8;
+  border: 1px solid;
+  border-color: #e7e7e7;
+  border-width: 0 0 1px;
+}
+
+#header p {
+  float: left;
+  margin: 0;
+  font-size:5vmin;
+}
+
+#header p svg {
+  margin:0;
+  height: 8vmin;
+  max-height: 8vmin;
+  cursor: default;
+}
+
+#palette {
+  position:fixed; 
+  margin-left: 70%;
+  top:0; 
+  width:30%;
+  height: 100%;
+  z-index:1;
+}
+div.row {
+  float: right;
+  width: 100%;
+  height: 9%;
+}
+div.row div {
+  position: relative;
+  float: left;
+  width: 16.6%;
+  height: 100%;
+  border: 1px solid black;
+}
+div.row div svg, div.cmdrow svg, div.cmdfull svg, div.cmdlong svg {
+  position: absolute;
+  display: block;
+  top:2.5%;
+  bottom: 2.5%;
+  left: 2.5%;
+  right: 2.5%;
+  margin: auto;
+  max-width: 95%;
+  max-height: 95%;
+  cursor: default;
+}
+
+#palette div.row div.topleft {
+  float: left;
+  width: 16.6%;
+  height: 100%;
+  border:0px;
+  overflow: visible;
+}
+#palette div.row div.topleft svg {
+  display: block;
+  float: left;
+  top:initial;
+  bottom: initial;
+  left: initial;
+  right: initial;
+  margin: initial;
+  max-width: initial;
+  max-height: initial;
+  top:0;
+  left:0;
+}
+
+#dictionary {
+  position:fixed; 
+  margin-left: 0%;
+  top:9%; 
+  width:30%;
+  height: 91%;
+  border: 1px solid black;
+  z-index:1;
+}
+#search {
+  height: 3.5vh;
+  padding:0;
+  font-size:2.5vh;
+  line-height:2.5vh;
+  vertical-align: top;
+
+  margin-top: 2%;
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-bottom: 3%;
+  width: 45%;
+}
+
+#signmaker {
+  position:fixed; 
+  margin-left: 30%;
+  top:0%; 
+  width:40%;
+  height: 100%;
+}
+
+#sequence {
+  float: right;
+  width: 10%;
+  height: 100%;
+  border: 1px solid black;
+}
+#signbox {
+  float: left;
+  width: 90%;
+  height: 50%;
+  overflow:hidden;
+}
+#signbox div.mid{
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+#signbox div.mid img, #signbox div.mid svg{
+  position:absolute;
+  top: 0;  
+  bottom: 0;  
+  left: 0;  
+  right: 0; 
+  margin:auto;
+}
+#signbox div{
+  position: absolute;
+  cursor: default;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#signbox div svg {
+  display: block;
+  top:0;
+  left:0;
+}
+#signbox div.selected svg g text.sym-line {
+  fill: blue !important;
+}
+#command {
+  float:left;
+  width: 90%;
+  height: 50%;
+}
+div.cmdrow input, div.cmdlong input, #size, #line, #fill, select, input.terms{
+  margin-top: 0.25vh;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  height: 3.5vh;
+  width: 90%;
+  padding:0;
+  font-size:2.5vh;
+  line-height:2.5vh;
+  vertical-align: top;
+}
+
+#signtext {
+  margin-left: 30%;
+  width: 40%;
+  background: blue;
+  margin: auto;
+}
+
+
+body.inverse {
+  background: black;
+}
+
+body.inverse div.btn {
+  background: black;
+  color: white;
+  border: 1px solid white;
+}
+
+body.inverse div.cmd, body.inverse div.cmdrow, body.inverse div.cmdfull, body.inverse div.cmdlong, body.inverse div.cmdslim, body.inverse div.cmdhalf, body.inverse div.cmd.selected, body.inverse #dictionary, body.inverse #sequence {
+  border: 1px solid white;
+  background: black;
+}
+body.inverse div.cmd.unselected {
+  background: black;
+  border: 1px dashed white;
+  color: gray;
+}
+body.inverse div.cmd.disabled p, body.inverse div.cmd.unselected p {
+  color: gray;
+}
+body.inverse div.cmd p, body.inverse div.cmdslim p , body.inverse div.cmdhalf p, body.inverse div.cmdrow p, body.inverse div.cmdfull p, body.inverse div.cmdlong p {
+  color: white;
+}
+body.inverse div.cmd.unselected:hover {
+  border: 1px solid gray;
+}
+body.inverse div.cmd.unselected:hover p {
+  color: white;
+}
+body.inverse div.cmd.disabled svg g text.sym-line, body.inverse div.cmd.unselected svg g text.sym-line{
+  fill: gray !important;
+}
+body.inverse div.btn svg g text.sym-line, body.inverse div.cmd.unselected:hover svg g text.sym-line, body.inverse div.cmd svg g text.sym-line, body.inverse div.cmdslim svg g text.sym-line, body.inverse div.cmdhalf svg g text.sym-line, body.inverse div.cmdrow svg g text.sym-line, body.inverse div.cmdfull svg g text.sym-line, body.inverse div.cmdlong svg g text.sym-line, body.inverse #header p svg g text.sym-line, body.inverse div.row div svg g text.sym-line, body.inverse #signbox div svg g text.sym-line {
+  fill: white !important;
+}
+body.inverse div.btn svg g text.sym-fill, body.inverse div.cmd svg g text.sym-fill, body.inverse div.cmdslim svg g text.sym-fill, body.inverse div.cmdhalf svg g text.sym-fill, body.inverse div.cmdrow svg g text.sym-fill, body.inverse div.cmdfull svg g text.sym-fill, body.inverse div.cmdlong svg g text.sym-fill, body.inverse #header p svg g text.sym-fill, body.inverse div.row div svg g text.sym-fill, body.inverse div.sort svg g text.sym-fill, body.inverse #signbox div svg g text.sym-fill {
+  fill: black !important;
+}
+body.inverse #signbox div.selected svg g text.sym-line{
+  fill: yellow !important;
+}
+
+body.inverse #header p, body.inverse select, body.inverse input, body.inverse div.btn p, body.inverse #search {
+  background:black;
+  color:white;
+}
+body.inverse div.row div, body.inverse div.sort {
+  border: 1px solid white;
+}
+
+body.inverse #dictionary div.button{
+  background: black;
+  border: 1px solid white;
+  color: white;
+}
+body.inverse #dictionary div.button.disabled{
+  color: black;
+}
+
+body.inverse #header, body.inverse #palette, body.inverse #command, body.inverse #signtext, body.inverse #signbox, body.inverse #signmaker{
+  background: black;
+}
+
+body.colorful #dictionary, body.colorful div.cmd.selected.dictionary {
+  background: darkseagreen;
+}
+
+body.colorful #sequence, body.colorful #signbox, body.colorful div.cmd.selected.edit {
+  background: #ffffcc;
+}
+
+body.colorful #command {
+  background: sandybrown;
+}
+
+body.colorful  #palette, body.colorful div.cmd.selected.search {
+  background: lightblue;
+}
+
+body.waiting * {
+    cursor: progress !important;
+}
+
+svg g text {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

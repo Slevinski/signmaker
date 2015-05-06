@@ -81,7 +81,7 @@ function setAlphabet(lang){
   }
   document.getElementsByTagName('head')[0].appendChild(js);  
   var jsCheck = setInterval(function(){
-    if (window.alphabet){
+    if (window.alphabet && palette){
       classie.removeClass(document.body,"waiting");
       palette.vm.init();
       palette.vm.select();
@@ -209,7 +209,7 @@ dictionary.vm = {
       if (langDictionary){
         matched = window.dict.match(RegExp(pattern,'mgi'));
       } else {
-        matched = localStorage['dict'].match(RegExp(pattern,'mgi'));
+        matched = localStorage['dict']?localStorage['dict'].match(RegExp(pattern,'mgi')):'';
       }
       if (matched){
         dictionary.vm.matches = matched.sort();

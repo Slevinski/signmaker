@@ -1,8 +1,8 @@
 SignMaker
 =====================
 - - - 
-> Version 1.0  
-May 6th, 2015
+> Version 1.1  
+May 15th, 2015
 
 Write signs in any sign language with the SignWriting script using the [SignWriting 2010 Fonts]. 
 
@@ -143,6 +143,7 @@ MIT
 - - - 
 
 ## Version History
+* 1.1 - May 15th, 2015: dictionary sizing and remote font loading
 * 1.0 - May 6th, 2015: initial release
 
 [draft-slevinski-signwriting-text]: http://tools.ietf.org/html/draft-slevinski-signwriting-text

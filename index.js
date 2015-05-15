@@ -1,5 +1,5 @@
 /**
-* SignMaker v1.0
+* SignMaker v1.1
 * https://github.com/Slevinski/signmaker
 * Copyright (c) 2007-2015, Stephen E Slevinski Jr
 * SignMaker is released under the MIT License.
@@ -22,7 +22,6 @@ function checkSignLang(type) {
   if (!allSignLang[type].length) return;
   var key = allSignLang[type].shift();
   var url = 'config/' + type + "/" + type + '-' + key.slice(4) + '.js';
-  console.log(signLang[type].length);
   var xhr = new XMLHttpRequest();
   xhr.open('HEAD', url, true);
   xhr.onload = function (e) {
@@ -153,6 +152,16 @@ var dlFile = null;
 var dictionary = {};
 dictionary.controller = function(){};
 dictionary.vm = {
+  setpagesize: function(size){
+    if (size<1 || size>5) return;
+    var first = dictionary.vm.page()*dictionary.vm.subset;
+    dictionary.vm.pagesize = size;
+    dictionary.vm.subset = (size+1) * size * 2;
+    dictionary.vm.setpage(parseInt(first/dictionary.vm.subset));
+    m.redraw();
+  },
+  pagesize: 4,
+  subset: 40,
   refresh: function(){
     classie.addClass(document.body,"waiting");
     var js = document.createElement("script");
@@ -230,9 +239,9 @@ dictionary.vm = {
   setgrid: function(){
     dictionary.vm.grid=[[],[],[],[],[],[],[],[],[],[]];
     var cnt=0;
-    for (var i=dictionary.vm.page()*60; i < dictionary.vm.matches.length; i++) {
-      dictionary.vm.grid[(cnt++%10)].push(dictionary.vm.matches[i]);
-      if ((cnt+1)>60) break;
+    for (var i=dictionary.vm.page()*dictionary.vm.subset; i < dictionary.vm.matches.length; i++) {
+      dictionary.vm.grid[(cnt++%(dictionary.vm.pagesize*2))].push(dictionary.vm.matches[i]);
+      if ((cnt+1)>dictionary.vm.subset) break;
     }
   
   },
@@ -241,23 +250,27 @@ dictionary.vm = {
 dictionary.view = function(ctrl){
 //  var symbols = signmaker.vm.fsw().match(/S[1-3][0-9a-f]{2}[0-5][0-9a-f][0-9]{3}x[0-9]{3}/g) || [];
   var page = dictionary.vm.page();
-  var maxpage = parseInt(dictionary.vm.matches.length/60);
+  var maxpage = parseInt((dictionary.vm.matches.length-1)/dictionary.vm.subset);
   
   return [m("input",{id:"search",oninput: dictionary.vm.search}),
-    (maxpage>0)?[
-      m("div.btn",{onclick:dictionary.vm.setpage.bind(dictionary.vm,maxpage)},tt('lastPage')),
-      (page>=maxpage)?m("div.btn"):m("div.btn",{onclick:dictionary.vm.setpage.bind(dictionary.vm,page+1)},tt('nextPage')),
-      (page<=0)?m("div.btn"):m("div.btn",{onclick:dictionary.vm.setpage.bind(dictionary.vm,page-1)},tt('prevPage')),
-      m("div.btn",{onclick:dictionary.vm.setpage.bind(dictionary.vm,0)},tt('firstPage'))
-    ]:'',
-    
+    m("div.btn.clickable",{onclick:dictionary.vm.setpagesize.bind(dictionary.vm,dictionary.vm.pagesize-1)},tt('M508x508S37b16492x498S37b10498x492')),
+    m("div.btn.clickable",{onclick:dictionary.vm.setpagesize.bind(dictionary.vm,dictionary.vm.pagesize+1)},tt('M508x502S37b16492x498')),
     dictionary.vm.grid.map(function(row){
-      return m("div.row",row.map(function(fsw){
+      return m("div.row.s" + dictionary.vm.pagesize,row.map(function(fsw){
         var terms = fsw.split('\t');
         terms.shift();
         return m("div", {title: terms.join(', '),key: fsw.id,onclick: signmaker.vm.load.bind(signmaker.vm,fsw)},m.trust(sw10.svg(sw10.fsw(fsw))));
       }));
-    })
+    }),
+    m("div.bottom",[
+      (maxpage>0)?[
+        m("div.btn.paging.clickable",{onclick:dictionary.vm.setpage.bind(dictionary.vm,maxpage)},tt('lastPage')),
+        (page>=maxpage)?m("div.btn.paging"):m("div.btn.paging.clickable",{onclick:dictionary.vm.setpage.bind(dictionary.vm,page+1)},tt('nextPage')),
+        (page<=0)?m("div.btn.paging"):m("div.btn.paging.clickable",{onclick:dictionary.vm.setpage.bind(dictionary.vm,page-1)},tt('prevPage')),
+        m("div.btn.paging.clickable",{onclick:dictionary.vm.setpage.bind(dictionary.vm,0)},tt('firstPage')),
+        m("div.pageinfo",m.trust("&nbsp;&nbsp;" + (1+dictionary.vm.page()) + " / " + (1+maxpage)))
+      ]:'',
+    ]),
   ];
 };
 hashChange();
@@ -311,6 +324,7 @@ signmaker.vm = {
   },
   insert: function(){
     if (signmaker.vm.newentry().trim()){
+      if (!localStorage['dict']) localStorage['dict']='';
       if (localStorage['dict'].slice(-1)!="\n"){
         localStorage['dict'] += "\n";
       }
@@ -742,6 +756,7 @@ signmaker.view = function(ctrl){
         ]: m('div.cmdfull.clickable',{onclick: dictionary.vm.localCopy},m.trust(tt('localCopy')+tt('inBrowser'))),
         m('div.cmdrow.info',tt('signLanguage')),
         m('div.cmdrow',
+          m("p.fsw","FSW:"),
           m("input",{id:"fsw",readOnly: !!langDictionary,value:sw10.norm(signmaker.vm.fsw()),oninput:m.withAttr("value",signmaker.vm.fsw)})
         ),
         m('div.cmdrow.info',tt('spokenLanguage')),
@@ -1038,11 +1053,12 @@ palette.mirror = function(){
 
 // gets the offset of an element relative to the document
 function getOffset( el ) {
-  var offset = el.getBoundingClientRect();
+  var offset = el?el.getBoundingClientRect():{top:0,left:0};
   return { top : offset.top + (window.pageYOffset || window.document.documentElement.scrollTop), left : offset.left + (window.pageXOffset || window.document.documentElement.scrollLeft) }
 }
 
 function overlap(el1, el2){
+  if (!el2) return false;
   var offset1 = getOffset( el1 ), width1 = el1.offsetWidth, height1 = el1.offsetHeight,
     offset2 = getOffset( el2 ), width2 = el2.offsetWidth, height2 = el2.offsetHeight;
   if (!(offset2.left > offset1.left + width1 - width1/2 || offset2.left + width2 < offset1.left + width1/2 || offset2.top > offset1.top + height1 - height1/2 || offset2.top + height2 < offset1.top + height1/2 )){
@@ -1110,16 +1126,10 @@ palette.view = function(ctrl){
   ];
 };
 
+
+
 //font installation check
-if (!sw10.size("S10000")){
-  document.body.innerHTML = '<p><b>' + tt('fontNotInstalled') + '</b></p><p>' + tt('installFont') + '</p><hr>' + 
-    '<p>' + tt('windowsMacLinux') + '</p><ul><li><a href="https://github.com/Slevinski/signwriting_2010_fonts/raw/master/fonts/SignWriting%202010.ttf">SignWriting 2010</a></li><li><a href="https://github.com/Slevinski/signwriting_2010_fonts/raw/master/fonts/SignWriting%202010%20Filling.ttf">SignWriting 2010 Filling</a></li></ul><hr>' + 
-    '<p>' + tt('iOS') + '</p><ul><li><a href="https://github.com/Slevinski/signwriting_2010_fonts/raw/master/fonts/SignWriting%202010.mobileconfig">SignWriting 2010 Configuration Profile</a></li></ul>' +
-    '<p>' + tt('iOSWait') + '</p>' + 
-    '<p>' + tt('iOSError') + '</p>' +
-    '<p>' + tt('iOSAfter') + '</p><hr>' +
-    '<p>' + tt('android') + '</p><p>' + tt('androidHelp') + '</p><ul><li><a href="https://github.com/Slevinski/signwriting_2010_fonts">SignWriting 2010 Fonts</a></li></ul>';
-}  else {
+function initPage(){
   m.module(document.getElementById("palette"), palette);
   m.module(document.getElementById("header"), header);
   m.module(document.getElementById("dictionary"), dictionary);
@@ -1129,47 +1139,67 @@ if (!sw10.size("S10000")){
   checkSignLang('dictionary');
 }
 
-  addEventListener("keydown", function(event){
-    if (event.target==document.body){
-      var code = event.charCode || event.keyCode;
-      for (var i=0; i<keyboard['prevent'].length; i++){
-        if (code === keyboard['prevent'][i]){
-          event.preventDefault();
-        }
+addEventListener("keydown", function(event){
+  if (event.target==document.body){
+    var code = event.charCode || event.keyCode;
+    for (var i=0; i<keyboard['prevent'].length; i++){
+      if (code === keyboard['prevent'][i]){
+        event.preventDefault();
       }
-      return false;
     }
-  });
-
-  checkKeyboard = function (event,name){
-    if (event.target==document.body){
-      var code = event.charCode || event.keyCode;
-      var checks = keyboard[name];
-      var checking;
-      var act;
-      if (!(checks[0] instanceof Array)){
-        checks = [checks];
-      }
-      for (var i=0; i < checks.length; i++) {
-        checking = checks[i]
-        if (checking[0] == code){
-          act = true;
-          checking = checking.slice(1);
-          for (check in checking){
-            if (!event[checking[check]]){
-              act = false;
-              break;
-            }
-          }
-          if (act) return true;
-        }
-      }
-      return false;
-    }
+    return false;
   }
+});
 
-  //use focus and blur for target section and keyboard input
-  window.onload = function () {
+checkKeyboard = function (event,name){
+  if (event.target==document.body){
+    var code = event.charCode || event.keyCode;
+    var checks = keyboard[name];
+    var checking;
+    var act;
+    if (!(checks[0] instanceof Array)){
+      checks = [checks];
+    }
+    for (var i=0; i < checks.length; i++) {
+      checking = checks[i]
+      if (checking[0] == code){
+        act = true;
+        checking = checking.slice(1);
+        for (check in checking){
+          if (!event[checking[check]]){
+            act = false;
+            break;
+          }
+        }
+        if (act) return true;
+      }
+    }
+    return false;
+  }
+}
+
+window.onload = function () {
+  if (!sw10.size("S10000")){
+    classie.addClass(document.body,"waiting");
+    var page = document.body.innerHTML;
+    var cssCheck = setInterval(function(){
+      if (sw10.size("S10000")){
+        classie.removeClass(document.body,"waiting");
+        document.body.innerHTML = page;
+        clearInterval(cssCheck);
+        initPage();
+      }
+    },100);
+    document.body.innerHTML = '<p><b>' + tt('fontNotInstalled') + '</b></p><p>' + tt('installFont') + '</p><hr>' + 
+      '<p>' + tt('windowsMacLinux') + '</p><ul><li><a href="https://cdn.rawgit.com/Slevinski/signwriting_2010_fonts/master/fonts/SignWriting%202010.ttf">SignWriting 2010</a></li><li><a href="https://cdn.rawgit.com/Slevinski/signwriting_2010_fonts/master/fonts/SignWriting%202010%20Filling.ttf">SignWriting 2010 Filling</a></li></ul><hr>' + 
+      '<p>' + tt('iOS') + '</p><ul><li><a href="https://cdn.rawgit.com/Slevinski/signwriting_2010_fonts/master/fonts/SignWriting%202010.mobileconfig">SignWriting 2010 Configuration Profile</a></li></ul>' +
+      '<p>' + tt('iOSWait') + '</p>' + 
+      '<p>' + tt('iOSError') + '</p>' +
+      '<p>' + tt('iOSAfter') + '</p><hr>' +
+      '<p>' + tt('android') + '</p><p>' + tt('androidHelp') + '</p><ul><li><a href="https://github.com/Slevinski/signwriting_2010_fonts">SignWriting 2010 Fonts</a></li></ul>';
+  } else {
+    initPage();
+  }
 
   addEventListener("keyup", function(event) {
     var x = event.charCode || event.keyCode;
@@ -1198,4 +1228,5 @@ if (!sw10.size("S10000")){
      
     if (event.preventDefault) event.preventDefault();
     return false;
-  });}
+  });
+}

@@ -1,3 +1,18 @@
+@font-face {
+  font-family: "SignWriting 2010";
+  src: 
+    local('SignWriting 2010'),
+    local('SignWriting_2010'),
+    url('https://cdn.rawgit.com/Slevinski/signwriting_2010_fonts/master/fonts/SignWriting%202010.ttf') format('truetype');
+}
+@font-face {
+  font-family: "SignWriting 2010 Filling";
+  src: 
+    local('SignWriting 2010 Filling'),
+    local('SignWriting_2010_Filling'),
+    url('https://cdn.rawgit.com/Slevinski/signwriting_2010_fonts/master/fonts/SignWriting%202010%20Filling.ttf') format('truetype');
+}
+
 *, *:before, *:after {
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
  }
@@ -47,9 +62,24 @@ div.btn {
   height: 9vh;
 }
 #dictionary div.btn{
-  width: 12%;
   float: right;
+  width: 20%;
   height: 7%;
+}
+#dictionary div.bottom {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 9%;
+}
+#dictionary div.pageinfo {
+  position: absolute;
+  bottom: 0;
+  font-size: 1.6vw;
+}
+#dictionary div.btn.paging {
+  height: 100%;
+  width: 17%
 }
 #dictionary div.btn.disabled{
   border: 1px solid black;
@@ -181,6 +211,37 @@ div.row div {
   height: 100%;
   border: 1px solid black;
 }
+#dictionary div.row.s5 {
+  height: 8%;
+}
+#dictionary div.row.s4 {
+  height: 10%;
+}
+#dictionary div.row.s3 {
+  height: 13.33%;
+}
+#dictionary div.row.s2 {
+  height: 20%;
+}
+#dictionary div.row.s1 {
+  height: 40%;
+}
+#dictionary div.row.s5 div {
+  width: 16.6%;
+}
+#dictionary div.row.s4 div {
+  width: 20%;
+}
+#dictionary div.row.s3 div {
+  width: 25%;
+}
+#dictionary div.row.s2 div {
+  width: 33.3%;
+}
+#dictionary div.row.s1 div {
+  width: 50%;
+}
+
 div.row div svg, div.cmdrow svg, div.cmdfull svg, div.cmdlong svg {
   position: absolute;
   display: block;
@@ -307,6 +368,17 @@ div.cmdrow input, div.cmdlong input, #size, #line, #fill, select, input.terms{
   vertical-align: top;
 }
 
+div.cmdrow p.fsw{
+  float: left;
+  margin-left: 2%;
+}
+#fsw {
+  float: right;
+  margin-right: 4%;
+  font-size:1.5vh;
+  width: 80%;
+}
+
 #signtext {
   margin-left: 30%;
   width: 40%;
@@ -337,7 +409,7 @@ body.inverse div.cmd.unselected {
 body.inverse div.cmd.disabled p, body.inverse div.cmd.unselected p {
   color: gray;
 }
-body.inverse div.cmd p, body.inverse div.cmdslim p , body.inverse div.cmdhalf p, body.inverse div.cmdrow p, body.inverse div.cmdfull p, body.inverse div.cmdlong p {
+body.inverse div.cmd p, body.inverse div.cmdslim p , body.inverse div.cmdhalf p, body.inverse div.cmdrow p, body.inverse div.cmdfull p, body.inverse div.cmdlong p, body.inverse div.pageinfo {
   color: white;
 }
 body.inverse div.cmd.unselected:hover {

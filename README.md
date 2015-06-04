@@ -1,8 +1,8 @@
 SignMaker
 =====================
 - - - 
-> Version 1.1  
-May 15th, 2015
+> Version 1.2  
+June 4th, 2015
 
 Write signs in any sign language with the SignWriting script using the [SignWriting 2010 Fonts]. 
 
@@ -138,11 +138,13 @@ MIT
 
 - - -
 ## To Do
-* iPhone and iPod customizations for smaller screens
+* additional customizations for smaller screens
+* enable app downloads for PNG, SVG, and dictionary export
 
 - - - 
 
 ## Version History
+* 1.2 - June 4th, 2015: app customizations and dictionary source
 * 1.1 - May 15th, 2015: dictionary sizing and remote font loading
 * 1.0 - May 6th, 2015: initial release
 

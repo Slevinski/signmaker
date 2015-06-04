@@ -1,9 +1,11 @@
 /**
-* SignMaker v1.1
+* SignMaker v1.2
 * https://github.com/Slevinski/signmaker
 * Copyright (c) 2007-2015, Stephen E Slevinski Jr
 * SignMaker is released under the MIT License.
 */
+var isApp = false;
+
 function setColoring(name){
   document.body.className=name;
   localStorage['colorPref']=name;
@@ -62,7 +64,10 @@ function tt(args){
   return m.trust(sw10.svg(text) || '<p>' + text + '</p>');
 }
 
-window.onresize = m.redraw;
+window.onresize = function (){
+  m.redraw();
+}
+
 window.onhashchange = hashChange;
 
 var langAlphabet,langDictionary;
@@ -180,6 +185,28 @@ dictionary.vm = {
     hashSet();
     dictionary.vm.search();
   },
+  import: function(){
+    var dictText = document.getElementById("dictText").value;
+    var lines = dictText.split("\n");
+    dictText = '';
+    var fsw,start,end;
+    for (var i=0; i<lines.length; i++){
+      fsw = sw10.fsw(lines[i]);
+      if (fsw){
+        start = lines[i].indexOf(fsw);
+        end = lines[i].indexOf('\\n"');
+        if (end==-1){
+          end = lines[i].length;
+        }
+        dictText += lines[i].slice(start,end) + "\n";
+      }
+    }
+    localStorage['dict']=dictText;
+    setDictionary('');
+    hashSet();
+    dictionary.vm.search();
+    
+  },
   export: function(){
     var lines;
     if (langDictionary){
@@ -248,7 +275,6 @@ dictionary.vm = {
 };
 
 dictionary.view = function(ctrl){
-//  var symbols = signmaker.vm.fsw().match(/S[1-3][0-9a-f]{2}[0-5][0-9a-f][0-9]{3}x[0-9]{3}/g) || [];
   var page = dictionary.vm.page();
   var maxpage = parseInt((dictionary.vm.matches.length-1)/dictionary.vm.subset);
   
@@ -296,6 +322,7 @@ signmaker.vm = {
   midWidth: 125,
   midHeight: 125,
   grid: m.prop(localStorage['gridPref']?parseInt(localStorage['gridPref']):1),
+  dictView: m.prop(localStorage['dictView']?parseInt(localStorage['dictView']):'text'),
   entry: m.prop(""),
   new: function(){
     signmaker.vm.entry('');
@@ -625,7 +652,6 @@ function seqDragEnd( draggie,e,p ) {
   var position2 = parseInt((draggie.startPoint.y+draggie.dragPoint.y) / (window.innerHeight/20));
   draggie.element.style.left = (parseInt(draggie.element.style.left) - draggie.dragPoint.x) + 'px';
   draggie.element.style.top = (parseInt(draggie.element.style.top) - draggie.dragPoint.y) + 'px';
-//  var key = draggie.element.key;
   if (position1<signmaker.vm.sort.length){
     if (position1!=position2){
       signmaker.vm.sort.splice(position2, 0, signmaker.vm.sort.splice(position1, 1)[0]);
@@ -644,7 +670,6 @@ signmaker.view = function(ctrl){
   signmaker.vm.midHeight = parseInt(clientHeight/2);
   var bbox = sw10.bbox(sw10.max(signmaker.vm.fsw())).split(" ");
   //check if bbox is outside of display
-  //check left
   if (bbox.length==4){
     if (bbox[0]<510-signmaker.vm.midWidth || bbox[1]>490+signmaker.vm.midWidth) { // left or right
       signmaker.vm.midWidth = signmaker.vm.midWidth + 500 - parseInt((parseInt(bbox[0])+parseInt(bbox[1]))/2);
@@ -818,7 +843,7 @@ signmaker.view = function(ctrl){
         m('div.cmdslim',
           m("input",{id:"fill",value:signmaker.vm.fillcolor(),oninput:m.withAttr('value',signmaker.vm.fillcolor)})
         ),
-        m('div.cmd.clickable',{onclick: signmaker.vm.dlpng},tt('download')),
+        isApp?'':m('div.cmd.clickable',{onclick: signmaker.vm.dlpng},tt('download')),
       ];
       var canvas = sw10.canvas(sw10.norm(signmaker.vm.fsw()),{size: signmaker.vm.size(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor()});
       var data = canvas?canvas.toDataURL("image/png"):"";
@@ -851,7 +876,7 @@ signmaker.view = function(ctrl){
         m('div.cmdslim',
           m("input",{id:"fill",value:signmaker.vm.fillcolor(),oninput:m.withAttr('value',signmaker.vm.fillcolor)})
         ),
-        m('div.cmd.clickable',{onclick: signmaker.vm.dlsvg},tt('download')),
+        isApp?'':m('div.cmd.clickable',{onclick: signmaker.vm.dlsvg},tt('download')),
       ];
       var svg = sw10.svg(sw10.norm(signmaker.vm.fsw()),{size: signmaker.vm.size(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor()});
       editor = m('div',{id:"signbox"},
@@ -928,9 +953,33 @@ signmaker.view = function(ctrl){
           )
         ),
         m('div.cmd',{class: (!langDictionary)?"disabled":"clickable",onclick: (!!langDictionary)?dictionary.vm.localCopy:null},tt('localCopy')),
-        m('div.cmd',{class: (!!langDictionary)?"disabled":"clickable",onclick: (!langDictionary)?dictionary.vm.refresh:null},tt('reloadDictionary')),
+        isApp?m('div.cmd'):m('div.cmd',{class: (!!langDictionary)?"disabled":"clickable",onclick: (!langDictionary)?dictionary.vm.refresh:null},tt('reloadDictionary')),
+        isApp?m('div.cmd'):m('div.cmd.clickable',{onclick: dictionary.vm.export},tt('exportDictionary')),
+        m('div.cmd.clickable',{onclick: signmaker.vm.tab.bind(signmaker.vm,8)},tt("sourceDictionary")),
         m('div.cmd',{class: (!!langDictionary)?"disabled":"clickable",onclick: (!langDictionary)?dictionary.vm.empty:null},tt('emptyDictionary')),
-        m('div.cmd.clickable',{onclick: dictionary.vm.export},tt('exportDictionary')),
+      ]
+      break;
+    case 8:
+      var dictText;
+      if (langDictionary){
+        dictText = window.dict;
+      } else {
+        dictText = localStorage['dict'];
+      } 
+      if (signmaker.vm.dictView()=='js'){
+        lines = dictText.split("\n");
+        dictText = 'window.dict = "' + lines.shift() + '\\n";\n';
+        for (var i=0; i < lines.length; i++) {
+          dictText += 'dict += "' + lines[i] + '\\n";\n';
+        }
+      }
+
+      currentTab = [
+        m("textarea",{id:'dictText'},dictText),
+        m('div.cmd.clickable',{onclick: function(){signmaker.vm.dictView('text');localStorage['dictView']='text';}},tt('plaintext')),
+        m('div.cmd.clickable',{onclick: function(){signmaker.vm.dictView('js');localStorage['dictView']='js';}},tt('jstext')),
+        m('div.cmd'),
+        m('div.cmd.clickable',{onclick: dictionary.vm.import},tt('importDictionary')),
       ]
       break;
   }
@@ -1127,18 +1176,6 @@ palette.view = function(ctrl){
 };
 
 
-
-//font installation check
-function initPage(){
-  m.module(document.getElementById("palette"), palette);
-  m.module(document.getElementById("header"), header);
-  m.module(document.getElementById("dictionary"), dictionary);
-  m.module(document.getElementById("signmaker"), signmaker);
-  hashSet();
-  checkSignLang('alphabet');
-  checkSignLang('dictionary');
-}
-
 addEventListener("keydown", function(event){
   if (event.target==document.body){
     var code = event.charCode || event.keyCode;
@@ -1178,25 +1215,51 @@ checkKeyboard = function (event,name){
   }
 }
 
+//font installation check
+function initPage(){
+  initApp();
+  hashSet();
+  checkSignLang('alphabet');
+  checkSignLang('dictionary');
+}
+
+function initApp(){
+  m.module(document.getElementById("palette"), palette);
+  m.module(document.getElementById("header"), header);
+  m.module(document.getElementById("dictionary"), dictionary);
+  m.module(document.getElementById("signmaker"), signmaker);
+}
+var cssCheck;
 window.onload = function () {
+  var cnt = 0;
   if (!sw10.size("S10000")){
     classie.addClass(document.body,"waiting");
     var page = document.body.innerHTML;
-    var cssCheck = setInterval(function(){
+    cssCheck = setInterval(function(){
       if (sw10.size("S10000")){
         classie.removeClass(document.body,"waiting");
         document.body.innerHTML = page;
         clearInterval(cssCheck);
         initPage();
+        //secondary call for Android default browser
+        //setTimeout(function(){ initApp(); }, 100);
+      } else {
+        document.getElementById('dots').innerHTML=Array(1+parseInt(((cnt++)%40)/10)).join('.');      
       }
     },100);
-    document.body.innerHTML = '<p><b>' + tt('fontNotInstalled') + '</b></p><p>' + tt('installFont') + '</p><hr>' + 
+    document.body.innerHTML = '<h2>' + tt('fontNotInstalled') + '</h2>' +
+      '<p><b>' + t('loadFont') + '</b><span id="dots"></span></p>' +
+      '<button onclick="clearInterval(cssCheck);">' + t('cancelFont') + '</button>' +
+      '<hr><hr>' + 
+      '<h2>' + tt('installFont') + '</h2><hr>' + 
       '<p>' + tt('windowsMacLinux') + '</p><ul><li><a href="https://cdn.rawgit.com/Slevinski/signwriting_2010_fonts/master/fonts/SignWriting%202010.ttf">SignWriting 2010</a></li><li><a href="https://cdn.rawgit.com/Slevinski/signwriting_2010_fonts/master/fonts/SignWriting%202010%20Filling.ttf">SignWriting 2010 Filling</a></li></ul><hr>' + 
       '<p>' + tt('iOS') + '</p><ul><li><a href="https://cdn.rawgit.com/Slevinski/signwriting_2010_fonts/master/fonts/SignWriting%202010.mobileconfig">SignWriting 2010 Configuration Profile</a></li></ul>' +
       '<p>' + tt('iOSWait') + '</p>' + 
       '<p>' + tt('iOSError') + '</p>' +
       '<p>' + tt('iOSAfter') + '</p><hr>' +
-      '<p>' + tt('android') + '</p><p>' + tt('androidHelp') + '</p><ul><li><a href="https://github.com/Slevinski/signwriting_2010_fonts">SignWriting 2010 Fonts</a></li></ul>';
+      '<p>' + t('androidApp') + ': <a href="http://signbank.org/downloads/SignMakerApp.arm.apk">ARM</a> or <a href="http://signbank.org/downloads/SignMakerApp.x86.apk">x86</a></p>' + 
+      '<p>' + tt('androidRemote') + '</p>' +
+      '<p>' + t('android') + ' ' + t('androidHelp') + ' <a href="https://github.com/Slevinski/signwriting_2010_fonts">SignWriting 2010 Fonts</a></p>';
   } else {
     initPage();
   }

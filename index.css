@@ -22,8 +22,8 @@ body, body:before, body:after {
   margin-right: 30%;
 }
 html,body {
-  height: 100%;
   overflow: auto;
+  height: 100%;
   margin: 0;
   -webkit-overflow-scrolling: touch;
 }
@@ -59,7 +59,7 @@ div.sort{
 
 div.btn {
   width: 33.3%;
-  height: 9vh;
+  height: 9%;
 }
 #dictionary div.btn{
   float: right;
@@ -87,27 +87,27 @@ div.btn {
 }
 div.cmd {
   width: 25%;
-  height: 8vh;
+  height: 16%;
 }
 div.cmdrow {
   width: 100%;
-  height: 4.8vh;
+  height: 9.6%;
 }
 div.cmdfull {
   width: 100%;
-  height: 8vh;
+  height: 16%;
 }
 div.cmdlong {
   width: 75%;
-  height: 4.8vh;
+  height: 9.6%;
 }
 div.cmdslim{
   width: 25%;
-  height: 4.8vh;
+  height: 9.6%;
 }
 div.cmdhalf{
   width: 50%;
-  height: 4.8vh;
+  height: 9.6%;
 }
 
 div.btn p, div.cmd p, div.cmdslim p, div.cmdhalf p, div.cmdrow p, div.cmdfull p, div.cmdlong p {
@@ -169,7 +169,7 @@ div.cmd.unselected:hover svg g text.sym-line{
 #header {
   position: relative;
   top:0px;
-  height: 9vh;
+  height: 9%;
   width: 30%;
   padding-left: 2%;
   background: #f8f8f8;
@@ -356,7 +356,7 @@ div.row div svg, div.cmdrow svg, div.cmdfull svg, div.cmdlong svg {
   height: 50%;
 }
 div.cmdrow input, div.cmdlong input, #size, #line, #fill, select, input.terms{
-  margin-top: 0.25vh;
+  margin-top: 0.5%;
   margin-bottom: 0;
   margin-left: 0;
   margin-right: 0;
@@ -386,6 +386,11 @@ div.cmdrow p.fsw{
   margin: auto;
 }
 
+textarea {
+  width: 100%;
+  height: 60%;
+  resize: none;
+}
 
 body.inverse {
   background: black;

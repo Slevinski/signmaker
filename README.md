@@ -1,8 +1,8 @@
 SignMaker
 =====================
 - - - 
-> Version 1.2  
-June 4th, 2015
+> Version 1.2.1  
+June 5th, 2015
 
 Write signs in any sign language with the SignWriting script using the [SignWriting 2010 Fonts]. 
 
@@ -10,7 +10,7 @@ Write signs in any sign language with the SignWriting script using the [SignWrit
 ## About
 SignMaker is a standards based editor, utilizing HTML, CSS, JavaScript, SVG, TrueType Fonts, and PNG images.  
 
-SignMaker is browser based without the need for a server connection.  It can be used online or it can be [downloaded][Download] and run directly from the user's computer.
+SignMaker is browser based without the need for a server connection.  It can be used online or it can be [downloaded][Download] and run directly from the user's computer.  An Android App is also available for [ARM][SignMakerARM] and [x86][SignMakerX86] processors.
 
 The primary online website can be used to create a private dictionary in the browser's LocalStorage or view dozens of sign language dictionaries from around the world.
 * http://signbank.org/signmaker.html
@@ -32,10 +32,15 @@ The secondary online website can be used to create a private dictionary in the b
  
 - - -
 ## Installation
+### Windows, Mac, and Linux
  1. [Download] source code in zip file.
  2. Unzip source code on your computer.
  3. Open the index.html file in a browser.
 
+### Android
+ 1. Navigate to Menu -> Settings -> Applications and check the box marked "Unknown Sources"
+ 2. Download the SignMaker App: [ARM][SignMakerARM] or [x86][SignMakerX86].
+ 3. Install the App
 - - -
 ## Help and Documentation
 Help and documentation is available online: http://signbank.org/signmaker.html
@@ -144,6 +149,7 @@ MIT
 - - - 
 
 ## Version History
+* 1.2.1 - June 5th, 2015: Android app download links
 * 1.2 - June 4th, 2015: app customizations and dictionary source
 * 1.1 - May 15th, 2015: dictionary sizing and remote font loading
 * 1.0 - May 6th, 2015: initial release
@@ -160,3 +166,5 @@ MIT
 [Mithril]: https://lhorie.github.io/mithril/
 [Translate]: https://github.com/musterknabe/translate.js
 [Download]: https://github.com/Slevinski/signmaker/archive/gh-pages.zip
+[SignMakerARM]: http://signbank.org/downloads/SignMakerApp.arm.apk
+[SignMakerX86]: http://signbank.org/downloads/SignMakerApp.x86.apk

@@ -41,6 +41,7 @@ The secondary online website can be used to create a private dictionary in the b
  1. Navigate to Menu -> Settings -> Applications and check the box marked "Unknown Sources"
  2. Download the SignMaker App: [ARM][SignMakerARM] or [x86][SignMakerX86].
  3. Install the App
+ 
 - - -
 ## Help and Documentation
 Help and documentation is available online: http://signbank.org/signmaker.html

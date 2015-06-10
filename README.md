@@ -1,8 +1,8 @@
 SignMaker
 =====================
 - - - 
-> Version 1.2.1  
-June 5th, 2015
+> Version 1.2.2  
+June 10th, 2015
 
 Write signs in any sign language with the SignWriting script using the [SignWriting 2010 Fonts]. 
 
@@ -150,6 +150,7 @@ MIT
 - - - 
 
 ## Version History
+* 1.2.2 - June 10th, 2015: Chrome fix in sw10.min.js 
 * 1.2.1 - June 5th, 2015: Android app download links
 * 1.2 - June 4th, 2015: app customizations and dictionary source
 * 1.1 - May 15th, 2015: dictionary sizing and remote font loading

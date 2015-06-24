@@ -1,5 +1,5 @@
 /**
-* SignMaker v1.2
+* SignMaker v1.2.3
 * https://github.com/Slevinski/signmaker
 * Copyright (c) 2007-2015, Stephen E Slevinski Jr
 * SignMaker is released under the MIT License.
@@ -1224,10 +1224,10 @@ function initPage(){
 }
 
 function initApp(){
-  m.module(document.getElementById("palette"), palette);
-  m.module(document.getElementById("header"), header);
-  m.module(document.getElementById("dictionary"), dictionary);
-  m.module(document.getElementById("signmaker"), signmaker);
+  m.mount(document.getElementById("palette"), palette);
+  m.mount(document.getElementById("header"), header);
+  m.mount(document.getElementById("dictionary"), dictionary);
+  m.mount(document.getElementById("signmaker"), signmaker);
 }
 var cssCheck;
 window.onload = function () {

@@ -1,5 +1,5 @@
 /**
-* SignMaker v1.2.3
+* SignMaker v1.3
 * https://github.com/Slevinski/signmaker
 * Copyright (c) 2007-2015, Stephen E Slevinski Jr
 * SignMaker is released under the MIT License.
@@ -414,11 +414,12 @@ signmaker.vm = {
     }
     return fsw;
   },
+  styling: m.prop(''),
   newentry: function(){
     return (sw10.norm(signmaker.vm.fsw()) + '\t' + signmaker.vm.terms.join('\t')).replace(/\t\t/g, '').trim();	
   },
   dlpng: function(){
-    var canvas = sw10.canvas(sw10.norm(signmaker.vm.fsw()),{size: signmaker.vm.size(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor()});
+    var canvas = sw10.canvas(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor()});
     var data = canvas.toDataURL("image/png");
     var link = document.getElementById('downloadlink');
     link.href = data;
@@ -426,7 +427,7 @@ signmaker.vm = {
     link.click();    
   },
   dlsvg: function(){
-    var svg = sw10.svg(sw10.norm(signmaker.vm.fsw()),{size: signmaker.vm.size(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor()});
+    var svg = sw10.svg(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor()});
     var data = new Blob([svg], {type: 'image/svg+xml'});
     if (dlFile !== null) {
       window.URL.revokeObjectURL(dlFile);
@@ -438,8 +439,10 @@ signmaker.vm = {
     link.click();    
   },
   size: m.prop('1'),
+  pad: m.prop('0'),
   linecolor: m.prop('black'),
   fillcolor: m.prop('white'),
+  backcolor: m.prop(''),
   center: function(){
     signmaker.vm.fsw(sw10.norm(signmaker.vm.fsw()));
   },
@@ -831,8 +834,11 @@ signmaker.view = function(ctrl){
         m('div.cmdslim',
           m("input",{id:"size",value:signmaker.vm.size(),oninput:m.withAttr('value',signmaker.vm.size)})
         ),
-        m('div.cmdslim'),
-        m('div.cmdslim'),
+        m('div.cmdslim',tt('pad')
+        ),
+        m('div.cmdslim',
+          m("input",{id:"pad",value:signmaker.vm.pad(),oninput:m.withAttr('value',signmaker.vm.pad)})
+        ),
         m('div.cmdslim',tt('line')
         ),
         m('div.cmdslim',
@@ -843,9 +849,19 @@ signmaker.view = function(ctrl){
         m('div.cmdslim',
           m("input",{id:"fill",value:signmaker.vm.fillcolor(),oninput:m.withAttr('value',signmaker.vm.fillcolor)})
         ),
+        m('div.cmdslim',tt('background')
+        ),
+        m('div.cmdslim',
+          m("input",{id:"back",value:signmaker.vm.backcolor(),oninput:m.withAttr('value',signmaker.vm.backcolor)})
+        ),
+        m('div.cmdhalf'),
+        m('div.cmdrow',
+          m("p.fsw","Styling: "),
+          m("input",{id:"styling",value:signmaker.vm.styling(),oninput:m.withAttr("value",signmaker.vm.styling)})
+        ),
         isApp?'':m('div.cmd.clickable',{onclick: signmaker.vm.dlpng},tt('download')),
       ];
-      var canvas = sw10.canvas(sw10.norm(signmaker.vm.fsw()),{size: signmaker.vm.size(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor()});
+      var canvas = sw10.canvas(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor()});
       var data = canvas?canvas.toDataURL("image/png"):"";
       editor = m('div',{id:"signbox"},
         m('div.mid',
@@ -864,8 +880,11 @@ signmaker.view = function(ctrl){
         m('div.cmdslim',
           m("input",{id:"size",value:signmaker.vm.size(),oninput:m.withAttr('value',signmaker.vm.size)})
         ),
-        m('div.cmdslim'),
-        m('div.cmdslim'),
+        m('div.cmdslim',tt('pad')
+        ),
+        m('div.cmdslim',
+          m("input",{id:"pad",value:signmaker.vm.pad(),oninput:m.withAttr('value',signmaker.vm.pad)})
+        ),
         m('div.cmdslim',tt('line')
         ),
         m('div.cmdslim',
@@ -876,9 +895,19 @@ signmaker.view = function(ctrl){
         m('div.cmdslim',
           m("input",{id:"fill",value:signmaker.vm.fillcolor(),oninput:m.withAttr('value',signmaker.vm.fillcolor)})
         ),
+        m('div.cmdslim',tt('background')
+        ),
+        m('div.cmdslim',
+          m("input",{id:"back",value:signmaker.vm.backcolor(),oninput:m.withAttr('value',signmaker.vm.backcolor)})
+        ),
+        m('div.cmdhalf'),
+        m('div.cmdrow',
+          m("p.fsw","Styling: "),
+          m("input",{id:"styling",value:signmaker.vm.styling(),oninput:m.withAttr("value",signmaker.vm.styling)})
+        ),
         isApp?'':m('div.cmd.clickable',{onclick: signmaker.vm.dlsvg},tt('download')),
       ];
-      var svg = sw10.svg(sw10.norm(signmaker.vm.fsw()),{size: signmaker.vm.size(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor()});
+      var svg = sw10.svg(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor()});
       editor = m('div',{id:"signbox"},
         m('div.mid',
           m.trust(svg)
@@ -1005,16 +1034,34 @@ palette.structure = function(){
   return window.alphabet;
 };
 
-palette.vm = {};
+palette.vm = {dialing: 0,dialhist:[]};
 
 palette.vm.init = function(){
   this.source = palette.structure();
 }
+palette.vm.dial = function(level){
+  if (!palette.vm.dialing){
+    palette.vm.dialhist=[];
+  }
+  var index = "0123".indexOf(level);
+  palette.vm.dialing = index==-1?0:index;
+}
+
+
 palette.vm.select = function(group,base,lower){
   var key;
   this.group = group || '';
   this.base = base || '';
   this.lower = !!lower;
+  var search = document.getElementById("search");
+  search = search?search.value:'';
+  var query = sw10.query(search);
+  query = query?query:"Q";
+  var text = '';
+  if (palette.vm.dialing){
+    text = langDictionary?window.dict:localStorage['dict'];
+  }
+  
   if (this.base && !this.lower){
     var key1 = this.base.slice(0,4) + "08";
     var key2 = this.base.slice(0,4) + "18";
@@ -1023,6 +1070,9 @@ palette.vm.select = function(group,base,lower){
     for (var f=0;f<6;f++){
       for (var r=0;r<8;r++){
         key=this.base.slice(0,4) + f + r;
+        if (palette.vm.dialing && !sw10.results(query+key,text).length) {
+          key='';
+        }
         this.grid[r].push(key);
       }
     }
@@ -1032,6 +1082,9 @@ palette.vm.select = function(group,base,lower){
     for (var f=0;f<6;f++){
       for (var r=8;r<16;r++){
         key=this.base.slice(0,4) + f + r.toString(16);
+        if (palette.vm.dialing && !sw10.results(query+key,text).length) {
+          key='';
+        }
         this.grid[(r-8)].push(key);
       }
     }
@@ -1040,7 +1093,11 @@ palette.vm.select = function(group,base,lower){
     this.grid=[[],[],[],[],[],[],[],[],[],[]];
     var cnt=0;
     for (var i=0; i<this.source[this.group].length;i++){
-      this.grid[(cnt++%10)].push(this.source[this.group][i]);
+      key = this.source[this.group][i];
+      if (palette.vm.dialing && !sw10.results(query+key.slice(0,4)+'uu',text).length) {
+        key='';
+      }
+      this.grid[(cnt++%10)].push(key);
     }
     for (var i=cnt; i<60;i++){
       this.grid[(i%10)].push('');
@@ -1050,6 +1107,13 @@ palette.vm.select = function(group,base,lower){
     this.grid=[[],[],[],[],[],[],[],[],[],[]];
     var cnt=0;
     for (key in this.source){
+      if (palette.vm.dialing){
+        var start = window.alphabet[key][0];
+        var end = window.alphabet[key].slice(-1)[0]
+        if (!sw10.results(query+"R" + start.slice(1,4) + 't' + end.slice(1,4),text).length) {
+          key='';
+        }
+      }
       this.grid[(cnt++%10)].push(key);
     }
     for (var i=cnt; i<60;i++){
@@ -1065,12 +1129,91 @@ palette.controller = function(){
 
 palette.click = function(key){
   if (palette.vm.base){
+    if (palette.vm.dialing){
+      palette.setdial(key);
+    }
     return;
   } else if (palette.vm.group){
-    palette.vm.select(palette.vm.group,key);
+    if(palette.vm.dialing==2){
+      palette.setdial(key.slice(0,4)+'uu');
+    } else {
+      palette.vm.select(palette.vm.group,key);
+    }
   } else {
-    palette.vm.select(key);
+    if(palette.vm.dialing==1){
+      var start = window.alphabet[key][0];
+      var end = window.alphabet[key].slice(-1)[0]
+      palette.setdial("R" + start.slice(1,4) + 't' + end.slice(1,4));
+    } else {
+      palette.vm.select(key);
+    }
   }
+};
+palette.dial = function(level){
+  var index = "0123".indexOf(level);
+  level = index==-1?0:index;
+  var classes;
+  if (level==0) {
+    if (palette.vm.dialing){
+      classes = "checked";
+    } else {
+      classes = "unchecked";
+    }
+  } else {
+    if(palette.vm.dialing==level){
+      classes = "checked";
+    } else {
+      classes = "unchecked";
+    }
+  }
+  if (palette.vm.dialing) classes += ' smaller';
+  return {
+    class: classes, 
+    onclick: function(){
+      palette.vm.dial(level);
+      palette.vm.select()
+    }
+  };
+};
+palette.setdial = function(query){
+  var q = sw10.query(document.getElementById("search").value);
+  palette.vm.dialhist.push(q);
+  q = q?q+query:"Q"+query;
+  document.getElementById("search").value=sw10.query(q);
+  dictionary.vm.search();
+  palette.vm.select();
+}
+palette.clear = function(){
+  return {
+    onclick: function(){
+      document.getElementById("search").value='';
+      dictionary.vm.search();
+      palette.vm.select();
+    }
+  }
+}
+palette.undo = function(){
+  return {
+    class: palette.vm.dialhist.length || palette.vm.group?"clickable":"disabled",
+    onclick: function(){
+      if (palette.vm.base){
+        palette.vm.select(palette.vm.group);
+      } else if (palette.vm.group){
+        palette.vm.select();
+      } else if (palette.vm.dialhist.length){
+        document.getElementById("search").value=palette.vm.dialhist.pop();
+        dictionary.vm.search();
+        palette.vm.select();
+      }
+    }
+  }
+}
+palette.top = function(){
+  return {
+    onclick: function(){
+      palette.vm.select();
+    }
+  };
 };
 palette.previous = function(){
   return {
@@ -1083,15 +1226,9 @@ palette.previous = function(){
     }
   };
 };
-palette.top = function(){
-  return {
-    onclick: function(){
-      palette.vm.select();
-    }
-  };
-};
 palette.mirror = function(){
   return {
+    class: palette.vm.dialing==3?"smaller":'',
     onclick: function(){
       palette.vm.select(palette.vm.group,palette.vm.base,!palette.vm.lower);
     }
@@ -1153,11 +1290,21 @@ function palDragMove( draggie ){
 
 palette.view = function(ctrl){
   var tooltip = palette.vm.base?'':palette.vm.group?'base_':'group_';
-  return [m("div.btn",palette.top(),tt("top")),
-    m("div.btn",palette.previous(),tt("previous")),
+  return [
+    m("div.btn.clickable",palette.dial(palette.vm.dialing?0:2),tt("dial")),
+    palette.vm.dialing?[
+      m("div.btn",palette.dial(1),tt("dial1")),
+      m("div.btn",palette.dial(2),tt("dial2")),
+      m("div.btn",palette.dial(3),tt("dial3")),
+      m("div.btn.smaller.clickable",palette.clear(),tt("clearAll")),
+      m("div.btn.smaller",palette.undo(),tt("undo")),
+    ]:[
+      m("div.btn.clickable",palette.top(),tt("top")),
+      m("div.btn.clickable",palette.previous(),tt("previous"))
+    ],
     palette.vm.mirror?m("div.btn",palette.mirror(),tt("mirror")):'',
     palette.vm.grid.map(function(row){
-      return m("div.row",row.map(function(key){
+      return m("div.row",{class:palette.vm.dialing?"smaller":''},row.map(function(key){
         return m("div"
         , {
           title: tooltip?t(tooltip + key.slice(0,4)):'',

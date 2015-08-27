@@ -62,9 +62,31 @@ div.sort{
 }
 
 div.btn {
-  width: 33.3%;
+  width: 25%;
   height: 9%;
 }
+
+div.smaller {
+  height: 6%;
+}
+div.checked {
+    background-color:gray;
+    border-radius:4px;
+    border:1px solid #D0D0D0;
+}
+div.checked:hover {
+    border-radius:4px;
+    color:white;
+}
+div.unchecked {
+    border-radius:4px;
+    border:1px solid #D0D0D0;
+    color:gray;
+}
+div.unchecked:hover {
+    color:black;
+}
+
 #dictionary div.btn{
   float: right;
   width: 20%;
@@ -85,7 +107,7 @@ div.btn {
   height: 100%;
   width: 17%
 }
-#dictionary div.btn.disabled{
+div.disabled{
   border: 1px solid black;
   color: #e7e7e7;
 }
@@ -137,10 +159,10 @@ div.sort svg g text.sym-line {
   fill: gray !important;
 }
 
-div.cmd.disabled {
+div.disabled {
   color: gray;
 }
-div.cmd.disabled svg g text.sym-line{
+div.disabled svg g text.sym-line{
   fill: gray !important;
 }
 div.cmd.unselected:hover svg g text.sym-line{
@@ -207,6 +229,9 @@ div.row {
   float: right;
   width: 100%;
   height: 9%;
+}
+div.row.smaller {
+  height: 8.7%;
 }
 div.row div {
   position: relative;
@@ -359,7 +384,7 @@ div.row div svg, div.cmdrow svg, div.cmdfull svg, div.cmdlong svg {
   width: 90%;
   height: 50%;
 }
-div.cmdrow input, div.cmdlong input, #size, #line, #fill, select, input.terms{
+div.cmdrow input, div.cmdlong input, #size, #pad, #line, #fill, #back, select, input.terms{
   margin-top: 0.5%;
   margin-bottom: 0;
   margin-left: 0;
@@ -376,11 +401,11 @@ div.cmdrow p.fsw{
   float: left;
   margin-left: 2%;
 }
-#fsw {
+#fsw, #styling{
   float: right;
   margin-right: 4%;
   font-size:1.5vh;
-  width: 80%;
+  width: 75%;
 }
 
 #signtext {
@@ -415,7 +440,7 @@ body.inverse div.cmd.unselected {
   border: 1px dashed white;
   color: gray;
 }
-body.inverse div.cmd.disabled p, body.inverse div.cmd.unselected p {
+body.inverse div.disabled p, body.inverse div.cmd.unselected p {
   color: gray;
 }
 body.inverse div.cmd p, body.inverse div.cmdslim p , body.inverse div.cmdhalf p, body.inverse div.cmdrow p, body.inverse div.cmdfull p, body.inverse div.cmdlong p, body.inverse div.pageinfo {
@@ -427,7 +452,7 @@ body.inverse div.cmd.unselected:hover {
 body.inverse div.cmd.unselected:hover p {
   color: white;
 }
-body.inverse div.cmd.disabled svg g text.sym-line, body.inverse div.cmd.unselected svg g text.sym-line{
+body.inverse div.disabled svg g text.sym-line, body.inverse div.cmd.unselected svg g text.sym-line{
   fill: gray !important;
 }
 body.inverse div.btn svg g text.sym-line, body.inverse div.cmd.unselected:hover svg g text.sym-line, body.inverse div.cmd svg g text.sym-line, body.inverse div.cmdslim svg g text.sym-line, body.inverse div.cmdhalf svg g text.sym-line, body.inverse div.cmdrow svg g text.sym-line, body.inverse div.cmdfull svg g text.sym-line, body.inverse div.cmdlong svg g text.sym-line, body.inverse #header p svg g text.sym-line, body.inverse div.row div svg g text.sym-line, body.inverse #signbox div svg g text.sym-line {

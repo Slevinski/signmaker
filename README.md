@@ -1,8 +1,8 @@
 SignMaker
 =====================
 - - - 
-> Version 1.2.5  
-July 8th, 2015
+> Version 1.3  
+August 27th, 2015
 
 Write signs in any sign language with the SignWriting script using the [SignWriting 2010 Fonts]. 
 
@@ -150,6 +150,7 @@ MIT
 - - - 
 
 ## Version History
+* 1.3 - Aug 27th, 2015: styling string and dialing search
 * 1.2.5 - July 8th, 2015: sw10.min.js update for trunk centering 
 * 1.2.4 - June 26th, 2015: Spanish UI
 * 1.2.3 - June 24th, 2015: messages fix, svg overflow, and mithril update 

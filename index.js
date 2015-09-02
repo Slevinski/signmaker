@@ -255,6 +255,7 @@ dictionary.vm = {
     }
     dictionary.vm.page(0);
     dictionary.vm.setgrid();
+    if (palette && palette.vm.dialing) palette.vm.select();
   },
   page: m.prop(0),
   setpage: function(page){
@@ -419,7 +420,7 @@ signmaker.vm = {
     return (sw10.norm(signmaker.vm.fsw()) + '\t' + signmaker.vm.terms.join('\t')).replace(/\t\t/g, '').trim();	
   },
   dlpng: function(){
-    var canvas = sw10.canvas(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor()});
+    var canvas = sw10.canvas(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
     var data = canvas.toDataURL("image/png");
     var link = document.getElementById('downloadlink');
     link.href = data;
@@ -427,7 +428,7 @@ signmaker.vm = {
     link.click();    
   },
   dlsvg: function(){
-    var svg = sw10.svg(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor()});
+    var svg = sw10.svg(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
     var data = new Blob([svg], {type: 'image/svg+xml'});
     if (dlFile !== null) {
       window.URL.revokeObjectURL(dlFile);
@@ -443,6 +444,7 @@ signmaker.vm = {
   linecolor: m.prop('black'),
   fillcolor: m.prop('white'),
   backcolor: m.prop(''),
+  colorize: m.prop(''),
   center: function(){
     signmaker.vm.fsw(sw10.norm(signmaker.vm.fsw()));
   },
@@ -804,7 +806,9 @@ signmaker.view = function(ctrl){
         m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"E")},tt('sameSymbols')),
         m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"EL")},tt('sameSymbolsLocation')),
         m('div.cmd',{class: (signmaker.vm.sort.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"e")},tt('sameSymbolsSorted')),
-        m('div.cmd'),
+        m('div.cmd.clickable',{class: (palette.vm.dialing)?"checked":"unchecked",onclick: palette.vm.dial.bind(palette.vm,palette.vm.dialing?0:2)},[
+          tt('dial')
+        ]),
         m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"G")},tt('baseSymbols')),
         m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"GL")},tt('baseSymbolsLocation')),
         m('div.cmd',{class: (signmaker.vm.sort.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"g")},tt('baseSymbolsSorted')),
@@ -854,14 +858,18 @@ signmaker.view = function(ctrl){
         m('div.cmdslim',
           m("input",{id:"back",value:signmaker.vm.backcolor(),oninput:m.withAttr('value',signmaker.vm.backcolor)})
         ),
-        m('div.cmdhalf'),
+        m('div.cmdslim',tt('colorize')
+        ),
+        m('div.cmdslim',
+          m("input",{id:"colorize",type:"checkbox",checked:signmaker.vm.colorize(),onclick:m.withAttr('checked',signmaker.vm.colorize)})
+        ),
         m('div.cmdrow',
           m("p.fsw","Styling: "),
           m("input",{id:"styling",value:signmaker.vm.styling(),oninput:m.withAttr("value",signmaker.vm.styling)})
         ),
         isApp?'':m('div.cmd.clickable',{onclick: signmaker.vm.dlpng},tt('download')),
       ];
-      var canvas = sw10.canvas(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor()});
+      var canvas = sw10.canvas(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
       var data = canvas?canvas.toDataURL("image/png"):"";
       editor = m('div',{id:"signbox"},
         m('div.mid',
@@ -900,14 +908,18 @@ signmaker.view = function(ctrl){
         m('div.cmdslim',
           m("input",{id:"back",value:signmaker.vm.backcolor(),oninput:m.withAttr('value',signmaker.vm.backcolor)})
         ),
-        m('div.cmdhalf'),
+        m('div.cmdslim',tt('colorize')
+        ),
+        m('div.cmdslim',
+          m("input",{id:"colorize",type:"checkbox",checked:signmaker.vm.colorize(),onclick:m.withAttr('checked',signmaker.vm.colorize)})
+        ),
         m('div.cmdrow',
           m("p.fsw","Styling: "),
           m("input",{id:"styling",value:signmaker.vm.styling(),oninput:m.withAttr("value",signmaker.vm.styling)})
         ),
         isApp?'':m('div.cmd.clickable',{onclick: signmaker.vm.dlsvg},tt('download')),
       ];
-      var svg = sw10.svg(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor()});
+      var svg = sw10.svg(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
       editor = m('div',{id:"signbox"},
         m('div.mid',
           m.trust(svg)
@@ -1181,14 +1193,14 @@ palette.setdial = function(query){
   q = q?q+query:"Q"+query;
   document.getElementById("search").value=sw10.query(q);
   dictionary.vm.search();
-  palette.vm.select();
+//  palette.vm.select();
 }
 palette.clear = function(){
   return {
     onclick: function(){
       document.getElementById("search").value='';
       dictionary.vm.search();
-      palette.vm.select();
+//      palette.vm.select();
     }
   }
 }
@@ -1203,7 +1215,7 @@ palette.undo = function(){
       } else if (palette.vm.dialhist.length){
         document.getElementById("search").value=palette.vm.dialhist.pop();
         dictionary.vm.search();
-        palette.vm.select();
+        //palette.vm.select();
       }
     }
   }
@@ -1298,6 +1310,7 @@ palette.view = function(ctrl){
       m("div.btn",palette.dial(3),tt("dial3")),
       m("div.btn.smaller.clickable",palette.clear(),tt("clearAll")),
       m("div.btn.smaller",palette.undo(),tt("undo")),
+      m("div.btn.smaller.clickable",palette.top(),tt("top")),
     ]:[
       m("div.btn.clickable",palette.top(),tt("top")),
       m("div.btn.clickable",palette.previous(),tt("previous"))

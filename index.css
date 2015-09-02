@@ -71,16 +71,13 @@ div.smaller {
 }
 div.checked {
     background-color:gray;
-    border-radius:4px;
-    border:1px solid #D0D0D0;
+    border:1px solid black;
 }
 div.checked:hover {
-    border-radius:4px;
     color:white;
 }
 div.unchecked {
-    border-radius:4px;
-    border:1px solid #D0D0D0;
+    border:1px solid black;
     color:gray;
 }
 div.unchecked:hover {
@@ -468,6 +465,9 @@ body.inverse #signbox div.selected svg g text.sym-line{
 body.inverse #header p, body.inverse select, body.inverse input, body.inverse div.btn p, body.inverse #search {
   background:black;
   color:white;
+}
+body.inverse div.checked, body.inverse div.checked p {
+    background-color:darkgray;
 }
 body.inverse div.row div, body.inverse div.sort {
   border: 1px solid white;

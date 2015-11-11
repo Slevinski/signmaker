@@ -803,15 +803,15 @@ signmaker.view = function(ctrl){
     case 2:
       currentTab = [
         m('div.cmdrow.info',tt('signLanguage')),
-        m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"E")},tt('sameSymbols')),
-        m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"EL")},tt('sameSymbolsLocation')),
-        m('div.cmd',{class: (signmaker.vm.sort.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"e")},tt('sameSymbolsSorted')),
+        m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"S")},tt('sameSymbols')),
+        m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"SL")},tt('sameSymbolsLocation')),
+        m('div.cmd',{class: (signmaker.vm.sort.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"A")},tt('sameSymbolsSorted')),
         m('div.cmd.clickable',{class: (palette.vm.dialing)?"checked":"unchecked",onclick: palette.vm.dial.bind(palette.vm,palette.vm.dialing?0:2)},[
           tt('dial')
         ]),
-        m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"G")},tt('baseSymbols')),
-        m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"GL")},tt('baseSymbolsLocation')),
-        m('div.cmd',{class: (signmaker.vm.sort.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"g")},tt('baseSymbolsSorted')),
+        m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"s")},tt('baseSymbols')),
+        m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"sL")},tt('baseSymbolsLocation')),
+        m('div.cmd',{class: (signmaker.vm.sort.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"a")},tt('baseSymbolsSorted')),
         m('div.cmd'),
         m('div.cmdrow.info',tt('spokenLanguage')),
         m('div.cmdrow',

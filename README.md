@@ -1,8 +1,8 @@
 SignMaker
 =====================
 - - - 
-> Version 1.3.1  
-September 2nd, 2015
+> Version 1.3.2  
+November 11th, 2015
 
 Write signs in any sign language with the SignWriting script using the [SignWriting 2010 Fonts]. 
 
@@ -146,10 +146,12 @@ MIT
 ## To Do
 * additional customizations for smaller screens
 * enable app downloads for PNG, SVG, and dictionary export
+* CSS for checkbox: white inside, bigger, centered
 
 - - - 
 
 ## Version History
+* 1.3.2 - Nov 11th, 2015: sw10.js v1.7.0
 * 1.3.1 - Sept 2nd, 2015: colorize and click search additions
 * 1.3 - Aug 27th, 2015: styling string and dialing search
 * 1.2.5 - July 8th, 2015: sw10.min.js update for trunk centering 

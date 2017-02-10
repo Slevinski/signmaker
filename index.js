@@ -61,7 +61,7 @@ function setUI(lang){
 function tt(args){
   text = t.apply(this,arguments);
   text = text.replace(/@@/g,'');
-  return m.trust(sw10.svg(text) || '<p>' + text + '</p>');
+  return m.trust(ssw.svg(text) || '<p>' + text + '</p>');
 }
 
 window.onresize = function (){
@@ -191,7 +191,7 @@ dictionary.vm = {
     dictText = '';
     var fsw,start,end;
     for (var i=0; i<lines.length; i++){
-      fsw = sw10.fsw(lines[i]);
+      fsw = ssw.fsw(lines[i]);
       if (fsw){
         start = lines[i].indexOf(fsw);
         end = lines[i].indexOf('\\n"');
@@ -233,11 +233,11 @@ dictionary.vm = {
     var search = document.getElementById("search");
     search = search?search.value:'';
     var pattern,matched,matches;
-    if (sw10.query(search)){
+    if (ssw.query(search)){
       if (langDictionary){
-        dictionary.vm.matches = sw10.lines(search,window.dict).sort();
+        dictionary.vm.matches = ssw.lines(search,window.dict).sort();
       } else {
-        dictionary.vm.matches = sw10.lines(search,localStorage['dict']).sort();
+        dictionary.vm.matches = ssw.lines(search,localStorage['dict']).sort();
       }
     } else {
       search=search?search:".+";
@@ -286,7 +286,7 @@ dictionary.view = function(ctrl){
       return m("div.row.s" + dictionary.vm.pagesize,row.map(function(fsw){
         var terms = fsw.split('\t');
         terms.shift();
-        return m("div", {title: terms.join(', '),key: fsw.id,onclick: signmaker.vm.load.bind(signmaker.vm,fsw)},m.trust(sw10.svg(sw10.fsw(fsw))));
+        return m("div", {title: terms.join(', '),key: fsw.id,onclick: signmaker.vm.load.bind(signmaker.vm,fsw)},m.trust(ssw.svg(ssw.fsw(fsw))));
       }));
     }),
     m("div.bottom",[
@@ -417,10 +417,10 @@ signmaker.vm = {
   },
   styling: m.prop(''),
   newentry: function(){
-    return (sw10.norm(signmaker.vm.fsw()) + '\t' + signmaker.vm.terms.join('\t')).replace(/\t\t/g, '').trim();	
+    return (ssw.norm(signmaker.vm.fsw()) + '\t' + signmaker.vm.terms.join('\t')).replace(/\t\t/g, '').trim();	
   },
   dlpng: function(){
-    var canvas = sw10.canvas(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
+    var canvas = ssw.canvas(ssw.norm(signmaker.vm.fsw())+ssw.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
     var data = canvas.toDataURL("image/png");
     var link = document.getElementById('downloadlink');
     link.href = data;
@@ -428,7 +428,7 @@ signmaker.vm = {
     link.click();    
   },
   dlsvg: function(){
-    var svg = sw10.svg(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
+    var svg = ssw.svg(ssw.norm(signmaker.vm.fsw())+ssw.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
     var data = new Blob([svg], {type: 'image/svg+xml'});
     if (dlFile !== null) {
       window.URL.revokeObjectURL(dlFile);
@@ -446,10 +446,10 @@ signmaker.vm = {
   backcolor: m.prop(''),
   colorize: m.prop(''),
   center: function(){
-    signmaker.vm.fsw(sw10.norm(signmaker.vm.fsw()));
+    signmaker.vm.fsw(ssw.norm(signmaker.vm.fsw()));
   },
   search: function(flags){
-    var query = sw10.convert(signmaker.vm.fsw(),flags);
+    var query = ssw.convert(signmaker.vm.fsw(),flags);
     if (query) {
       document.getElementById("search").value = query;
       dictionary.vm.search();
@@ -551,7 +551,7 @@ signmaker.vm = {
   variation: function(step) {
     for (var i=0; i < signmaker.vm.list.length; i++) {
       if (signmaker.vm.list[i].selected()){
-        signmaker.vm.list[i].key(sw10.scroll(signmaker.vm.list[i].key(),step));
+        signmaker.vm.list[i].key(ssw.scroll(signmaker.vm.list[i].key(),step));
       }
      }
     signmaker.vm.addhistory();
@@ -560,7 +560,7 @@ signmaker.vm = {
   mirror: function() {
     for (var i=0; i < signmaker.vm.list.length; i++) {
       if (signmaker.vm.list[i].selected()){
-        signmaker.vm.list[i].key(sw10.mirror(signmaker.vm.list[i].key()));
+        signmaker.vm.list[i].key(ssw.mirror(signmaker.vm.list[i].key()));
        }
     }
     signmaker.vm.addhistory();
@@ -569,7 +569,7 @@ signmaker.vm = {
   fill: function(step) {
     for (var i=0; i < signmaker.vm.list.length; i++) {
       if (signmaker.vm.list[i].selected()){
-        signmaker.vm.list[i].key(sw10.fill(signmaker.vm.list[i].key(),step));
+        signmaker.vm.list[i].key(ssw.fill(signmaker.vm.list[i].key(),step));
       }
     }
     signmaker.vm.addhistory();
@@ -591,7 +591,7 @@ signmaker.vm = {
   rotate: function(step) {
     for (var i=0; i < signmaker.vm.list.length; i++) {
       if (signmaker.vm.list[i].selected()){
-        signmaker.vm.list[i].key(sw10.rotate(signmaker.vm.list[i].key(),step));
+        signmaker.vm.list[i].key(ssw.rotate(signmaker.vm.list[i].key(),step));
       }
     }
     signmaker.vm.addhistory();
@@ -673,7 +673,7 @@ signmaker.view = function(ctrl){
   var clientHeight = document.getElementById('signmaker').clientHeight*.5;
   signmaker.vm.midWidth = parseInt(clientWidth/2);
   signmaker.vm.midHeight = parseInt(clientHeight/2);
-  var bbox = sw10.bbox(sw10.max(signmaker.vm.fsw())).split(" ");
+  var bbox = ssw.bbox(ssw.max(signmaker.vm.fsw())).split(" ");
   //check if bbox is outside of display
   if (bbox.length==4){
     if (bbox[0]<510-signmaker.vm.midWidth || bbox[1]>490+signmaker.vm.midWidth) { // left or right
@@ -732,7 +732,7 @@ signmaker.view = function(ctrl){
             draggie.on( 'dragEnd', sbDragEnd );
           }
         }
-      },m.trust(sw10.svg(symbol.key())));
+      },m.trust(ssw.svg(symbol.key())));
     })
   ]),
   m('div',{id:"sequence"},
@@ -746,7 +746,7 @@ signmaker.view = function(ctrl){
             draggie.on( 'dragEnd', seqDragEnd );
           }
         }
-      },m.trust(sw10.svg(key)));
+      },m.trust(ssw.svg(key)));
     }))
   ];
 
@@ -787,7 +787,7 @@ signmaker.view = function(ctrl){
         m('div.cmdrow.info',tt('signLanguage')),
         m('div.cmdrow',
           m("p.fsw","FSW:"),
-          m("input",{id:"fsw",readOnly: !!langDictionary,value:sw10.norm(signmaker.vm.fsw()),oninput:m.withAttr("value",signmaker.vm.fsw)})
+          m("input",{id:"fsw",readOnly: !!langDictionary,value:ssw.norm(signmaker.vm.fsw()),oninput:m.withAttr("value",signmaker.vm.fsw)})
         ),
         m('div.cmdrow.info',tt('spokenLanguage')),
         signmaker.vm.terms.map(function(term, index) {
@@ -869,7 +869,7 @@ signmaker.view = function(ctrl){
         ),
         isApp?'':m('div.cmd.clickable',{onclick: signmaker.vm.dlpng},tt('download')),
       ];
-      var canvas = sw10.canvas(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
+      var canvas = ssw.canvas(ssw.norm(signmaker.vm.fsw())+ssw.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
       var data = canvas?canvas.toDataURL("image/png"):"";
       editor = m('div',{id:"signbox"},
         m('div.mid',
@@ -919,7 +919,7 @@ signmaker.view = function(ctrl){
         ),
         isApp?'':m('div.cmd.clickable',{onclick: signmaker.vm.dlsvg},tt('download')),
       ];
-      var svg = sw10.svg(sw10.norm(signmaker.vm.fsw())+sw10.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
+      var svg = ssw.svg(ssw.norm(signmaker.vm.fsw())+ssw.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
       editor = m('div',{id:"signbox"},
         m('div.mid',
           m.trust(svg)
@@ -1067,7 +1067,7 @@ palette.vm.select = function(group,base,lower){
   this.lower = !!lower;
   var search = document.getElementById("search");
   search = search?search.value:'';
-  var query = sw10.query(search);
+  var query = ssw.query(search);
   query = query?query:"Q";
   var text = '';
   if (palette.vm.dialing){
@@ -1077,12 +1077,12 @@ palette.vm.select = function(group,base,lower){
   if (this.base && !this.lower){
     var key1 = this.base.slice(0,4) + "08";
     var key2 = this.base.slice(0,4) + "18";
-    this.mirror = (sw10.size(key1) || sw10.size(key2))
+    this.mirror = (ssw.size(key1) || ssw.size(key2))
     this.grid=[[],[],[],[],[],[],[],[]];
     for (var f=0;f<6;f++){
       for (var r=0;r<8;r++){
         key=this.base.slice(0,4) + f + r;
-        if (palette.vm.dialing && !sw10.results(query+key,text).length) {
+        if (palette.vm.dialing && !ssw.results(query+key,text).length) {
           key='';
         }
         this.grid[r].push(key);
@@ -1094,7 +1094,7 @@ palette.vm.select = function(group,base,lower){
     for (var f=0;f<6;f++){
       for (var r=8;r<16;r++){
         key=this.base.slice(0,4) + f + r.toString(16);
-        if (palette.vm.dialing && !sw10.results(query+key,text).length) {
+        if (palette.vm.dialing && !ssw.results(query+key,text).length) {
           key='';
         }
         this.grid[(r-8)].push(key);
@@ -1106,7 +1106,7 @@ palette.vm.select = function(group,base,lower){
     var cnt=0;
     for (var i=0; i<this.source[this.group].length;i++){
       key = this.source[this.group][i];
-      if (palette.vm.dialing && !sw10.results(query+key.slice(0,4)+'uu',text).length) {
+      if (palette.vm.dialing && !ssw.results(query+key.slice(0,4)+'uu',text).length) {
         key='';
       }
       this.grid[(cnt++%10)].push(key);
@@ -1122,7 +1122,7 @@ palette.vm.select = function(group,base,lower){
       if (palette.vm.dialing){
         var start = window.alphabet[key][0];
         var end = window.alphabet[key].slice(-1)[0]
-        if (!sw10.results(query+"R" + start.slice(1,4) + 't' + end.slice(1,4),text).length) {
+        if (!ssw.results(query+"R" + start.slice(1,4) + 't' + end.slice(1,4),text).length) {
           key='';
         }
       }
@@ -1188,10 +1188,10 @@ palette.dial = function(level){
   };
 };
 palette.setdial = function(query){
-  var q = sw10.query(document.getElementById("search").value);
+  var q = ssw.query(document.getElementById("search").value);
   palette.vm.dialhist.push(q);
   q = q?q+query:"Q"+query;
-  document.getElementById("search").value=sw10.query(q);
+  document.getElementById("search").value=ssw.query(q);
   dictionary.vm.search();
 //  palette.vm.select();
 }
@@ -1329,7 +1329,7 @@ palette.view = function(ctrl){
               draggie.on( 'dragEnd', palDragEnd );
             }
           }
-        },m.trust(sw10.svg(key)));
+        },m.trust(ssw.svg(key)));
       }));
     })
   ];
@@ -1392,11 +1392,11 @@ function initApp(){
 var cssCheck;
 window.onload = function () {
   var cnt = 0;
-  if (!sw10.size("S10000")){
+  if (!ssw.size("S10000")){
     classie.addClass(document.body,"waiting");
     var page = document.body.innerHTML;
     cssCheck = setInterval(function(){
-      if (sw10.size("S10000")){
+      if (ssw.size("S10000")){
         classie.removeClass(document.body,"waiting");
         document.body.innerHTML = page;
         clearInterval(cssCheck);
@@ -1407,22 +1407,23 @@ window.onload = function () {
         document.getElementById('dots').innerHTML=Array(1+parseInt(((cnt++)%40)/10)).join('.');      
       }
     },100);
-    document.body.innerHTML = '<h2>' + tt('fontNotInstalled') + '</h2>' +
-      '<p><b>' + t('loadFont') + '</b><span id="dots"></span></p>' +
-      '<button onclick="clearInterval(cssCheck);">' + t('cancelFont') + '</button>' +
-      '<hr><hr>' + 
-      '<h2>' + tt('installFont') + '</h2><hr>' + 
-      '<p>' + tt('windowsMacLinux') + '</p><ul><li><a href="https://cdn.rawgit.com/Slevinski/signwriting_2010_fonts/master/fonts/SignWriting%202010.ttf">SignWriting 2010</a></li><li><a href="https://cdn.rawgit.com/Slevinski/signwriting_2010_fonts/master/fonts/SignWriting%202010%20Filling.ttf">SignWriting 2010 Filling</a></li></ul><hr>' + 
-      '<p>' + tt('iOS') + '</p><ul><li><a href="https://cdn.rawgit.com/Slevinski/signwriting_2010_fonts/master/fonts/SignWriting%202010.mobileconfig">SignWriting 2010 Configuration Profile</a></li></ul>' +
-      '<p>' + tt('iOSWait') + '</p>' + 
-      '<p>' + tt('iOSError') + '</p>' +
-      '<p>' + tt('iOSAfter') + '</p><hr>' +
-      '<p>' + t('androidApp') + ': <a href="http://signbank.org/downloads/SignMakerApp.arm.apk">ARM</a> or <a href="http://signbank.org/downloads/SignMakerApp.x86.apk">x86</a></p>' + 
-      '<p>' + tt('androidRemote') + '</p>' +
-      '<p>' + t('android') + ' ' + t('androidHelp') + ' <a href="https://github.com/Slevinski/signwriting_2010_fonts">SignWriting 2010 Fonts</a></p>';
-  } else {
-    initPage();
-  }
+      document.body.innerHTML = '<h2>' + tt('fontNotInstalled') + '</h2>' +
+            '<p><b>' + t('loadFont') + '</b><span id="dots"></span></p>' +
+            '<button onclick="clearInterval(cssCheck);">' + t('cancelFont') + '</button>' +
+            '<hr><hr>' +
+            '<h2>' + tt('installFont') + '</h2><hr>' +
+            '<p>' + tt('windowsMacLinux') + '</p><ul><li><a href="https://slevinski.github.io/SuttonSignWriting/assets/SuttonSignWriting.ttf">Sutton SignWriting TrueType Font</a></li>' +
+            '<li><a href="https://slevinski.github.io/SuttonSignWriting/assets/SuttonSignWritingFill.ttf">Sutton SignWriting Fill TrueType Font</a></li></ul><hr>' +
+            '<p>' + tt('iOS') + '</p><ul><li><a href="https://slevinski.github.io/SuttonSignWriting/assets/SuttonSignWriting.mobileconfig">Sutton SignWriting Configuration Profile</a></li></ul>' +
+            '<p>' + tt('iOSWait') + '</p>' +
+            '<p>' + tt('iOSError') + '</p>' +
+            '<p>' + tt('iOSAfter') + '</p><hr>' +
+            '<p>' + t('androidApp') + ': <a href="http://signbank.org/downloads/SignMakerApp.arm.apk">ARM</a> or <a href="http://signbank.org/downloads/SignMakerApp.x86.apk">x86</a></p>' +
+            '<p>' + tt('androidRemote') + '</p>' +
+            '<p>' + t('android') + ' ' + t('androidHelp') + ' <a href="https://github.com/Slevinski/SuttonSignWriting">Sutton SignWriting Fonts</a></p>';
+    } else {
+        initPage();
+    }
 
   addEventListener("keyup", function(event) {
     var x = event.charCode || event.keyCode;

@@ -1,10 +1,10 @@
 SignMaker
 =====================
 - - - 
-> Version 1.3.2  
-November 11th, 2015
+> Version 1.3.3  
+February 10th, 2017
 
-Write signs in any sign language with the SignWriting script using the [SignWriting 2010 Fonts]. 
+Write signs in any sign language with the SignWriting script using the [Sutton SignWriting Fonts]. 
 
 - - - 
 ## About
@@ -91,10 +91,10 @@ The `dictionary` subdirectory can contain language specific dictionaries.  Dicti
 ## Support Libraries
 The `lib` directory contains several JavaScript support libraries.
 
-### SignWriting 2010 JavaScript Library
-> sw10.min.js 
+### Sutton SignWriting JavaScript Library
+> SuttonSignWriting.min.js 
 
-The [SignWriting 2010 JavaScript Library] provides support for SignWriting images and queries.  Released under the MIT License, the library includes a guide, API documentation, and testing suite.
+The [Sutton SignWriting JavaScript Library] provides support for SignWriting images and queries.  Released under the MIT License, the library includes a guide, API documentation, and testing suite.
 
 ### Draggabilly
 > draggabilly.min.js 
@@ -151,6 +151,7 @@ MIT
 - - - 
 
 ## Version History
+* 1.3.3 - Feb 10th, 2017: SuttonSignWriting.min.js v1.1.1
 * 1.3.2 - Nov 11th, 2015: sw10.js v1.7.0
 * 1.3.1 - Sept 2nd, 2015: colorize and click search additions
 * 1.3 - Aug 27th, 2015: styling string and dialing search
@@ -164,12 +165,12 @@ MIT
 * 1.0 - May 6th, 2015: initial release
 
 [draft-slevinski-signwriting-text]: http://tools.ietf.org/html/draft-slevinski-signwriting-text
-[SignWriting 2010 Fonts]: https://github.com/Slevinski/signwriting_2010_fonts
+[Sutton SignWriting Fonts]: https://github.com/Slevinski/SuttonSignWriting
 [SignWriting List]: http://www.signwriting.org/forums/swlist/
 [SignPuddle Online]: http://signpuddle.org
 [sb-alphabet]: http://signbank.org/signmaker/config/alphabet
 [sb-dictionary]: http://signbank.org/signmaker/config/dictionary
-[SignWriting 2010 JavaScript Library]: http://slevinski.github.io/sw10js/
+[Sutton SignWriting JavaScript Library]: https://slevinski.github.io/SuttonSignWriting/
 [MIT]: http://www.opensource.org/licenses/mit-license.php
 [Draggabilly]: http://draggabilly.desandro.com/
 [Mithril]: https://lhorie.github.io/mithril/

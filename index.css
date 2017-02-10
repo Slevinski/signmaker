@@ -1,16 +1,14 @@
 @font-face {
-  font-family: "SignWriting 2010";
+  font-family: "SuttonSignWriting";
   src: 
-    local('SignWriting 2010'),
-    local('SignWriting_2010'),
-    url('https://cdn.rawgit.com/Slevinski/signwriting_2010_fonts/master/fonts/SignWriting%202010.ttf') format('truetype');
+    local('SuttonSignWriting'),
+    url('https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWriting.ttf') format('truetype');
 }
 @font-face {
-  font-family: "SignWriting 2010 Filling";
+  font-family: "SuttonSignWritingFill";
   src: 
-    local('SignWriting 2010 Filling'),
-    local('SignWriting_2010_Filling'),
-    url('https://cdn.rawgit.com/Slevinski/signwriting_2010_fonts/master/fonts/SignWriting%202010%20Filling.ttf') format('truetype');
+    local('SuttonSignWritingFill'),
+    url('https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingFill.ttf') format('truetype');
 }
 svg {
   overflow: visible;

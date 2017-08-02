@@ -1412,9 +1412,9 @@ window.onload = function () {
             '<button onclick="clearInterval(cssCheck);">' + t('cancelFont') + '</button>' +
             '<hr><hr>' +
             '<h2>' + tt('installFont') + '</h2><hr>' +
-            '<p>' + tt('windowsMacLinux') + '</p><ul><li><a href="https://slevinski.github.io/SuttonSignWriting/assets/SuttonSignWriting.ttf">Sutton SignWriting TrueType Font</a></li>' +
+            '<p>' + tt('windowsMacLinux') + '</p><ul><li><a href="https://slevinski.github.io/SuttonSignWriting/assets/SuttonSignWritingLine.ttf">Sutton SignWriting Line TrueType Font</a></li>' +
             '<li><a href="https://slevinski.github.io/SuttonSignWriting/assets/SuttonSignWritingFill.ttf">Sutton SignWriting Fill TrueType Font</a></li></ul><hr>' +
-            '<p>' + tt('iOS') + '</p><ul><li><a href="https://slevinski.github.io/SuttonSignWriting/assets/SuttonSignWriting.mobileconfig">Sutton SignWriting Configuration Profile</a></li></ul>' +
+            '<p>' + tt('iOS') + '</p><ul><li><a href="https://slevinski.github.io/SuttonSignWriting/assets/SuttonSignWritingPlus.mobileconfig">Sutton SignWriting Configuration Profile</a></li></ul>' +
             '<p>' + tt('iOSWait') + '</p>' +
             '<p>' + tt('iOSError') + '</p>' +
             '<p>' + tt('iOSAfter') + '</p><hr>' +

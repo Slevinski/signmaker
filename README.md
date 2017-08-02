@@ -1,8 +1,8 @@
 SignMaker
 =====================
 - - - 
-> Version 1.3.3  
-February 10th, 2017
+> Version 1.4.0  
+August 2nd, 2017
 
 Write signs in any sign language with the SignWriting script using the [Sutton SignWriting Fonts]. 
 
@@ -126,7 +126,7 @@ Valerie Sutton (http://signwriting.org)
 - - - 
 
 ## Reference
-The Formal SignWriting character encoding used in SignMaker is defined in an Internet Draft submitted to the IETF: [draft-slevinski-signwriting-text].
+The Formal SignWriting character encoding used in SignMaker is defined in an Internet Draft submitted to the IETF: [draft-slevinski-formal-signwriting].
 The document is improved and resubmitted every 6 months.
 The character design has been stable since January 12, 2012.
 The current version of the Internet Draft is 05.
@@ -151,6 +151,7 @@ MIT
 - - - 
 
 ## Version History
+* 1.4.0 - Aug 2nd, 2017: update for SuttonSignWritingLine font
 * 1.3.3 - Feb 10th, 2017: SuttonSignWriting.min.js v1.1.1
 * 1.3.2 - Nov 11th, 2015: sw10.js v1.7.0
 * 1.3.1 - Sept 2nd, 2015: colorize and click search additions
@@ -164,13 +165,13 @@ MIT
 * 1.1 - May 15th, 2015: dictionary sizing and remote font loading
 * 1.0 - May 6th, 2015: initial release
 
-[draft-slevinski-signwriting-text]: http://tools.ietf.org/html/draft-slevinski-signwriting-text
-[Sutton SignWriting Fonts]: https://github.com/Slevinski/SuttonSignWriting
+[draft-slevinski-formal-signwriting]: http://tools.ietf.org/html/draft-slevinski-formal-signwriting
+[Sutton SignWriting Fonts]: https://slevinski.github.io/SuttonSignWriting/components/fonts.html
 [SignWriting List]: http://www.signwriting.org/forums/swlist/
 [SignPuddle Online]: http://signpuddle.org
 [sb-alphabet]: http://signbank.org/signmaker/config/alphabet
 [sb-dictionary]: http://signbank.org/signmaker/config/dictionary
-[Sutton SignWriting JavaScript Library]: https://slevinski.github.io/SuttonSignWriting/
+[Sutton SignWriting JavaScript Library]: https://slevinski.github.io/SuttonSignWriting/guide.html#js
 [MIT]: http://www.opensource.org/licenses/mit-license.php
 [Draggabilly]: http://draggabilly.desandro.com/
 [Mithril]: https://lhorie.github.io/mithril/

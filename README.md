@@ -1,7 +1,7 @@
 SignMaker 2017
 =====================
 - - - 
-> Version 2.0.0  
+> Version 2.0.1  
 December 15th, 2017
 
 Write signs in any sign language with the SignWriting script using the [Sutton SignWriting Fonts].
@@ -158,6 +158,7 @@ MIT
 - - - 
 
 ## Version History
+* 2.0.1 - Dec 15th, 2017: version string for JS file references
 * 2.0.0 - Dec 15th, 2017: update for SignWriting in Unicode (SWU)
 * 1.4.0 - Aug 2nd, 2017: update for SuttonSignWritingLine font
 * 1.3.3 - Feb 10th, 2017: SuttonSignWriting.min.js v1.1.1

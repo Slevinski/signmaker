@@ -10,13 +10,19 @@
     local('SuttonSignWritingFill'),
     url('https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingFill.ttf') format('truetype');
 }
+@font-face {
+  font-family: "SuttonSignWritingOneD";
+  src: 
+    local('SuttonSignWritingOneD'),
+    url('https://cdn.rawgit.com/Slevinski/SuttonSignWriting/master/assets/SuttonSignWritingOneD.ttf') format('truetype');
+}
 svg {
   overflow: visible;
 }
 
 *, *:before, *:after {
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
- }
+s }
 
 body, body:before, body:after {
   margin:0;
@@ -200,9 +206,18 @@ div.cmd.unselected:hover svg g text.sym-line{
 }
 
 #header p {
+  height: 100%;
+  width: 100%;
   float: left;
-  margin: 0;
-  font-size:5vmin;
+  font-size:4vmin;
+  line-height: 2vmin;
+}
+#header p p {
+  width: initial;
+  height: initial;
+  margin: 0 auto;
+  display: inline-block;
+  float: none;
 }
 
 #header p svg {
@@ -379,7 +394,7 @@ div.row div svg, div.cmdrow svg, div.cmdfull svg, div.cmdlong svg {
   width: 90%;
   height: 50%;
 }
-div.cmdrow input, div.cmdlong input, #size, #pad, #line, #fill, #back, select, input.terms{
+div.cmdrow input, div.cmdlong input, div.cmdhalf input, div.cmdfull input, #size, #pad, #line, #fill, #back, select, input.terms{
   margin-top: 0.5%;
   margin-bottom: 0;
   margin-left: 0;
@@ -392,17 +407,37 @@ div.cmdrow input, div.cmdlong input, #size, #pad, #line, #fill, #back, select, i
   vertical-align: top;
 }
 
-div.cmdrow p.fsw{
+div.cmdfull input{
+  height: 7vh;
+  width: 90%;
+  padding:0;
+  font-size:5vh;
+  line-height:5vh;
+  vertical-align: top;
+}
+
+div.cmdrow p.fsw, div.cmdrow p.swu, div.cmdfull p.swu{
   float: left;
   margin-left: 2%;
 }
-#fsw, #styling{
+#fsw, #swu, #styling{
   float: right;
   margin-right: 4%;
   font-size:1.5vh;
   width: 75%;
 }
-
+#swu {
+  font-family: SuttonSignWritingOneD;
+}
+.ssw-one-d {
+  font-family: SuttonSignWritingOneD;
+}
+div.cmdrow #swu {
+  font-size:1.5vh;
+}
+div.cmdfull #swu {
+  font-size:3vh;
+}
 #signtext {
   margin-left: 30%;
   width: 40%;
@@ -414,6 +449,13 @@ textarea {
   width: 100%;
   height: 60%;
   resize: none;
+}
+
+input.warning, select.warning, textarea.warning {
+  border: 1px solid #f0ad4e;
+}
+input.danger, select.danger, textarea.danger {
+  border: 1px solid #d9534f;
 }
 
 body.inverse {
@@ -435,11 +477,11 @@ body.inverse div.cmd.unselected {
   border: 1px dashed white;
   color: gray;
 }
-body.inverse div.disabled p, body.inverse div.cmd.unselected p {
-  color: gray;
-}
 body.inverse div.cmd p, body.inverse div.cmdslim p , body.inverse div.cmdhalf p, body.inverse div.cmdrow p, body.inverse div.cmdfull p, body.inverse div.cmdlong p, body.inverse div.pageinfo {
   color: white;
+}
+body.inverse div.disabled p, body.inverse div.cmd.unselected p {
+  color: gray;
 }
 body.inverse div.cmd.unselected:hover {
   border: 1px solid gray;

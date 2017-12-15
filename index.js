@@ -1,10 +1,16 @@
 /**
-* SignMaker v1.3
+* SignMaker v2
 * https://github.com/Slevinski/signmaker
-* Copyright (c) 2007-2015, Stephen E Slevinski Jr
+* Copyright (c) 2007-2017, Stephen E Slevinski Jr
 * SignMaker is released under the MIT License.
 */
 var isApp = false;
+
+function setChars(chars){
+  chars = (chars=='fsw')?'fsw':'swu';
+  localStorage['chars'] = chars;
+  signmaker.vm.chars = chars;
+}
 
 function setColoring(name){
   document.body.className=name;
@@ -36,7 +42,6 @@ function checkSignLang(type) {
     checkSignLang(type);
   };
   xhr.onerror = function (e) {
-    console.log(e);
     var index = signLang[type].indexOf(key);
     if (index > -1) {
       signLang[type].splice(index, 1);
@@ -94,29 +99,6 @@ function setAlphabet(lang){
     }
   },100);
 }
-function setDictionary(lang){
-  if(lang==langDictionary) return;
-  langDictionary=lang;
-  if (langDictionary){
-    classie.addClass(document.body,"waiting");
-    var js = document.createElement("script");
-    js.type = "text/javascript";
-    delete window.dict;
-    js.src = "config/dictionary/dictionary-" + langDictionary + ".js?" + Date.now();
-    document.getElementsByTagName('head')[0].appendChild(js);  
-    var jsCheck = setInterval(function(){
-      if (window.dict){
-        classie.removeClass(document.body,"waiting");
-        dictionary.vm.search();
-        m.redraw();
-        clearInterval(jsCheck);
-      }
-    },100);
-  } else {
-    dictionary.vm.search();
-    m.redraw();
-  }
-}
 
 function hashSet(){
   var hash = '?ui=' + localStorage['langUI'];
@@ -147,7 +129,7 @@ url += "config/dictionary.js";
 var header = {};
 header.controller = function(){};
 header.view = function(ctrl){
-  return [m("p",tt("signmaker"))];
+  return [m("p",tt("signmaker"), m.trust("&nbsp;"),m("p","2017"))];
 };
 
 
@@ -191,7 +173,7 @@ dictionary.vm = {
     dictText = '';
     var fsw,start,end;
     for (var i=0; i<lines.length; i++){
-      fsw = ssw.fsw(lines[i]);
+      fsw = ssw.sign(lines[i]);
       if (fsw){
         start = lines[i].indexOf(fsw);
         end = lines[i].indexOf('\\n"');
@@ -233,13 +215,19 @@ dictionary.vm = {
     var search = document.getElementById("search");
     search = search?search.value:'';
     var pattern,matched,matches;
+    var query = ssw.query(search);
+    var queryu = ssw.queryu(search);
     if (ssw.query(search)){
+      if (queryu > query) {
+        query = ssw.query2fsw(queryu);
+      }
       if (langDictionary){
-        dictionary.vm.matches = ssw.lines(search,window.dict).sort();
+        dictionary.vm.matches = ssw.lines(query,window.dict).sort();
       } else {
-        dictionary.vm.matches = ssw.lines(search,localStorage['dict']).sort();
+        dictionary.vm.matches = ssw.lines(query,localStorage['dict']).sort();
       }
     } else {
+      search = ssw.swu2fsw(search);
       search=search?search:".+";
       pattern = '^.*' + search + '.*';
       if (langDictionary){
@@ -248,6 +236,7 @@ dictionary.vm = {
         matched = localStorage['dict']?localStorage['dict'].match(RegExp(pattern,'mgi')):'';
       }
       if (matched){
+
         dictionary.vm.matches = matched.sort();
       } else {
         dictionary.vm.matches = [];
@@ -263,7 +252,7 @@ dictionary.vm = {
     dictionary.vm.setgrid();
   },
   matches: [],
-  grid: [],
+  grid: [[],[],[],[],[],[],[],[],[],[]],
   setgrid: function(){
     dictionary.vm.grid=[[],[],[],[],[],[],[],[],[],[]];
     var cnt=0;
@@ -271,22 +260,48 @@ dictionary.vm = {
       dictionary.vm.grid[(cnt++%(dictionary.vm.pagesize*2))].push(dictionary.vm.matches[i]);
       if ((cnt+1)>dictionary.vm.subset) break;
     }
-  
+    dictionary.vm.temp = dictionary.vm.matches;
+
+    m.redraw();
   },
 };
+function setDictionary(lang){
+  if(lang===langDictionary) return;
+  langDictionary=lang;
+  if (langDictionary){
+    classie.addClass(document.body,"waiting");
+    var js = document.createElement("script");
+    js.type = "text/javascript";
+    delete window.dict;
+    js.src = "config/dictionary/dictionary-" + langDictionary + ".js?" + Date.now();
+    document.getElementsByTagName('head')[0].appendChild(js);  
+    var jsCheck = setInterval(function(){
+      if (window.dict){
+        classie.removeClass(document.body,"waiting");
+        dictionary.vm.search();
+        m.redraw();
+        clearInterval(jsCheck);
+      }
+    },100);
+  } else {
+    dictionary.vm.search();
+  }
+}
+
+hashChange();
 
 dictionary.view = function(ctrl){
   var page = dictionary.vm.page();
   var maxpage = parseInt((dictionary.vm.matches.length-1)/dictionary.vm.subset);
-  
-  return [m("input",{id:"search",oninput: dictionary.vm.search}),
+  return [m("input",{class:"ssw-one-d", id:"search",oninput: dictionary.vm.search}),
     m("div.btn.clickable",{onclick:dictionary.vm.setpagesize.bind(dictionary.vm,dictionary.vm.pagesize-1)},tt('M508x508S37b16492x498S37b10498x492')),
     m("div.btn.clickable",{onclick:dictionary.vm.setpagesize.bind(dictionary.vm,dictionary.vm.pagesize+1)},tt('M508x502S37b16492x498')),
     dictionary.vm.grid.map(function(row){
       return m("div.row.s" + dictionary.vm.pagesize,row.map(function(fsw){
         var terms = fsw.split('\t');
         terms.shift();
-        return m("div", {title: terms.join(', '),key: fsw.id,onclick: signmaker.vm.load.bind(signmaker.vm,fsw)},m.trust(ssw.svg(ssw.fsw(fsw))));
+        return m("div", {title: terms.join(', '), key: fsw.id,onclick: signmaker.vm.load.bind(signmaker.vm,fsw)}
+          ,m.trust(ssw.svg(ssw.sign(fsw),(signmaker.vm.chars == "swu")?{"copy":"opt"}:'')));
       }));
     }),
     m("div.bottom",[
@@ -300,7 +315,6 @@ dictionary.view = function(ctrl){
     ]),
   ];
 };
-hashChange();
 // SIGNMAKER
 ////////////
 
@@ -323,6 +337,7 @@ signmaker.vm = {
   midWidth: 125,
   midHeight: 125,
   grid: m.prop(localStorage['gridPref']?parseInt(localStorage['gridPref']):1),
+  chars: localStorage['chars']?localStorage['chars']:'swu',
   dictView: m.prop(localStorage['dictView']?parseInt(localStorage['dictView']):'text'),
   entry: m.prop(""),
   new: function(){
@@ -337,10 +352,7 @@ signmaker.vm = {
     if (signmaker.vm.entry().trim()){
       var temp = localStorage['dict'].replace(signmaker.vm.entry() + '\n',signmaker.vm.newentry() + '\n');
       if (temp == localStorage['dict']){
-        temp = localStorage['dict'].replace(signmaker.vm.entry(),signmaker.vm.newentry());
-      }
-      if (temp == localStorage['dict']){
-        console.log('delentry failed');
+        console.log('update entry failed');
       } else {
         localStorage['dict']=temp;
         signmaker.vm.load(signmaker.vm.newentry());
@@ -390,8 +402,40 @@ signmaker.vm = {
     signmaker.vm.fsw(fsw);
     m.redraw();
   },
-  fsw: function(fsw){
-    if (fsw) {
+  fswlive: function(){
+    var fsw = 'M500x500';
+    if (signmaker.vm.sort.length) fsw = "A" + signmaker.vm.sort.join('') + fsw;
+    if (signmaker.vm.list.length){
+      for (var i=0; i < signmaker.vm.list.length; i++) {
+        fsw += signmaker.vm.list[i].key() + signmaker.vm.list[i].x() + 'x' + signmaker.vm.list[i].y();
+      }
+      var bbox = ssw.bbox(ssw.max(fsw)).split(' ');
+      fsw = fsw.replace("M500x500","M" + bbox[1] + 'x' + bbox[3]);
+    }
+    return fsw=="M500x500"?'':fsw;
+  },
+  swulive: function(){
+    return ssw.fsw2swu(signmaker.vm.fswlive());
+  },
+  swunorm: function(){
+    return ssw.fsw2swu(signmaker.vm.fswnorm());
+  },
+  fswnorm: function(){
+    var fsw = 'M500x500';
+    if (signmaker.vm.sort.length) fsw = "A" + signmaker.vm.sort.join('') + fsw;
+    if (signmaker.vm.list.length){
+      for (var i=0; i < signmaker.vm.list.length; i++) {
+        fsw += signmaker.vm.list[i].key() + signmaker.vm.list[i].x() + 'x' + signmaker.vm.list[i].y();
+      }
+      var bbox = ssw.bbox(ssw.max(fsw)).split(' ');
+        fsw = fsw.replace("M500x500",bbox[1] + 'x' + bbox[3]);
+    }
+    return ssw.norm(fsw);
+  },
+  fsw: function(fsw,silent){
+    if (typeof(fsw)!='undefined') {
+      
+      fsw = ssw.sign(fsw);
       var syms = fsw.match(/S[1-3][0-9a-f]{2}[0-5][0-9a-f][0-9]{3}x[0-9]{3}/g) || [];
       signmaker.vm.list = new spatials.List();
       for (var i=0; i < syms.length; i++) {
@@ -403,9 +447,32 @@ signmaker.vm = {
       } else {
         signmaker.vm.sort = [];
       }
-      signmaker.vm.addhistory();
+      signmaker.vm.addhistory(silent);
       signmaker.vm.selnone();
 
+    }
+    return signmaker.vm.fswlive();
+  },
+  fswraw: '',
+  fswview: function(fsw){
+    if (typeof(fsw)!='undefined') {
+      signmaker.vm.fswraw = fsw;
+      signmaker.vm.swuraw = '';
+      fsw = ssw.parse(fsw,"fsw")["fsw"];
+      signmaker.vm.fsw(fsw,true);
+      if (fsw==signmaker.vm.fswraw) {
+        signmaker.vm.fswraw = '';
+      } else {
+        fsw = signmaker.vm.fswraw;
+      }
+    } else {
+      fsw = signmaker.vm.fswraw || signmaker.vm.fswlive();
+    }
+    return fsw;
+  },
+  swu: function(swu,silent){
+    if (swu!='undefined') {
+      signmaker.vm.fsw(ssw.swu2fsw(swu),silent);
     } else {
       fsw = 'M500x500';
       if (signmaker.vm.sort.length) fsw = "A" + signmaker.vm.sort.join('') + fsw;
@@ -413,7 +480,23 @@ signmaker.vm = {
         fsw += signmaker.vm.list[i].key() + signmaker.vm.list[i].x() + 'x' + signmaker.vm.list[i].y();
       }
     }
-    return fsw;
+  },
+  swuraw: '',
+  swuview: function(swu){
+    if (typeof(swu)!='undefined') {
+      signmaker.vm.swuraw = swu;
+      signmaker.vm.fswraw = '';
+      swu = ssw.parse(swu,"swu")["swu"];
+      signmaker.vm.swu(swu,true);
+      if (swu==signmaker.vm.swuraw) {
+        signmaker.vm.swuraw = '';
+      } else {
+        swu = signmaker.vm.swuraw;
+      }
+    } else {
+      swu = signmaker.vm.swuraw || signmaker.vm.swulive();
+    }
+    return swu;
   },
   styling: m.prop(''),
   newentry: function(){
@@ -428,7 +511,16 @@ signmaker.vm = {
     link.click();    
   },
   dlsvg: function(){
-    var svg = ssw.svg(ssw.norm(signmaker.vm.fsw())+ssw.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
+    var svg = ssw.svg(ssw.norm(signmaker.vm.fsw())+ssw.styling(signmaker.vm.styling()),{
+      size: signmaker.vm.size(),
+      pad: signmaker.vm.pad(),
+      line: signmaker.vm.linecolor(), 
+      fill: signmaker.vm.fillcolor(), 
+      back: signmaker.vm.backcolor(), 
+      colorize: signmaker.vm.colorize(),
+      copy: (signmaker.vm.chars == "swu")?"opt":''
+    });
+
     var data = new Blob([svg], {type: 'image/svg+xml'});
     if (dlFile !== null) {
       window.URL.revokeObjectURL(dlFile);
@@ -454,14 +546,17 @@ signmaker.vm = {
       document.getElementById("search").value = query;
       dictionary.vm.search();
     }
-//    m.redraw();
   },
   list: new spatials.List(),
   sort: [],
   terms: ["","","","","","","",""],
   history: ['{"list":[],"sort":[],"terms":["","","","","","","",""],"entry":""}'],
   cursor: 0,
-  addhistory: function(){
+  addhistory: function(silent){
+    if (!silent) {
+      signmaker.vm.fswraw = '';
+      signmaker.vm.swuraw = '';
+    }
     var history ={list:signmaker.vm.list,sort:signmaker.vm.sort,terms:signmaker.vm.terms,entry:signmaker.vm.entry()};
     var newhist = JSON.stringify(history).replace(/true/g,'false');
     if (newhist != signmaker.vm.history[signmaker.vm.cursor]){
@@ -545,6 +640,7 @@ signmaker.vm = {
   },
   clear: function() {
     signmaker.vm.list = new spatials.List();
+    signmaker.vm.sort=[];
     signmaker.vm.addhistory();
     m.redraw();
   },
@@ -719,7 +815,7 @@ signmaker.view = function(ctrl){
     signmaker.vm.list.map(function(symbol, index) {
       return m("div"
       , {
-        class: symbol.selected() ? "selected" : "",
+        "class": symbol.selected() ? "selected" : "",
         style:{
           left: (parseInt(symbol.x())-500+signmaker.vm.midWidth).toString() + 'px',
           top: (parseInt(symbol.y())-500+signmaker.vm.midHeight).toString() + 'px'
@@ -754,10 +850,19 @@ signmaker.view = function(ctrl){
   switch (signmaker.vm.current()) {
     case 0:
       currentTab = [
-        m("div.cmd.clickable",{onclick: signmaker.vm.move.bind(signmaker.vm,-1,0)},tt('moveLeft')),
-        m('div.cmd.clickable',{onclick: signmaker.vm.move.bind(signmaker.vm,0,-1)},tt('moveUp')),
-        m('div.cmd.clickable',{onclick: signmaker.vm.move.bind(signmaker.vm,0,1)},tt('moveDown')),
-        m('div.cmd.clickable',{onclick: signmaker.vm.move.bind(signmaker.vm,1,0)},tt('moveRight')),
+        m("div.cmdslim.clickable.",{onclick: signmaker.vm.move.bind(signmaker.vm,-1,0)},tt('moveLeft')),
+        m('div.cmdslim.clickable',{onclick: signmaker.vm.move.bind(signmaker.vm,0,-1)},tt('moveUp')),
+        m('div.cmdslim.clickable',{onclick: signmaker.vm.move.bind(signmaker.vm,0,1)},tt('moveDown')),
+        m('div.cmdslim.clickable',{onclick: signmaker.vm.move.bind(signmaker.vm,1,0)},tt('moveRight')),
+        (signmaker.vm.chars=="fsw")?
+          m('div.cmdrow',
+            m("p.fsw","FSW:"),
+            m("input",{"class": (signmaker.vm.fswraw && (signmaker.vm.fswraw != signmaker.vm.fswlive()))?'warning':'', id:"fsw",value:signmaker.vm.fswview(),oninput:m.withAttr("value",signmaker.vm.fswview)})
+          )
+          :m('div.cmdrow',
+            m("p.swu","SWU:"),
+            m("input",{"class": (signmaker.vm.swuraw && (signmaker.vm.swuraw != signmaker.vm.swulive()))?'warning':'',id:"swu",value:signmaker.vm.swuview(),oninput:m.withAttr("value",signmaker.vm.swuview)})
+          ),
         m('div.cmd.clickable',{onclick: signmaker.vm.copy},tt("copy")),
         m('div.cmd.clickable',{onclick: signmaker.vm.mirror},tt('mirror')),
         m('div.cmd.clickable',{onclick: signmaker.vm.center},tt('center')),
@@ -765,11 +870,11 @@ signmaker.view = function(ctrl){
         m('div.cmd.clickable',{onclick: signmaker.vm.rotate.bind(signmaker.vm,-1)},tt('rotateCCW')),
         m('div.cmd.clickable',{onclick: signmaker.vm.rotate.bind(signmaker.vm,1)},tt('rotateCW')),
         m('div.cmd.clickable',{onclick: signmaker.vm.select.bind(signmaker.vm,1)},tt('selectNext')),
-        m('div.cmd',{class: (signmaker.vm.cursor<=0)?"disabled":"clickable",onclick: signmaker.vm.undo}, tt('undo')),
+        m('div.cmd',{"class": (signmaker.vm.cursor<=0)?"disabled":"clickable",onclick: signmaker.vm.undo}, tt('undo')),
         m('div.cmd.clickable',{onclick: signmaker.vm.fill.bind(signmaker.vm,-1)},tt('fillPrev')),
         m('div.cmd.clickable',{onclick: signmaker.vm.fill.bind(signmaker.vm,1)},tt('fillNext')),
         m('div.cmd.clickable',{onclick: signmaker.vm.select.bind(signmaker.vm,-1)},tt('selectPrev')),
-        m('div.cmd',{class: ((signmaker.vm.cursor+1)>=signmaker.vm.history.length)?"disabled":"clickable",onclick: signmaker.vm.redo},tt('redo')),
+        m('div.cmd',{"class": ((signmaker.vm.cursor+1)>=signmaker.vm.history.length)?"disabled":"clickable",onclick: signmaker.vm.redo},tt('redo')),
         m('div.cmd.clickable',{onclick: signmaker.vm.variation.bind(signmaker.vm,-1)},tt('variationPrev')),
         m('div.cmd.clickable',{onclick: signmaker.vm.variation.bind(signmaker.vm,1)},tt('variationNext')),
         m('div.cmd.clickable',{onclick: signmaker.vm.over},tt('placeOver')),
@@ -779,15 +884,18 @@ signmaker.view = function(ctrl){
     case 1:
       currentTab = [
         (!langDictionary)?[
-          m('div.cmd',{class: (!signmaker.vm.newentry().trim())?"disabled":"clickable",onclick: signmaker.vm.new},tt('clearEntry')),
-          m('div.cmd',{class: (!signmaker.vm.entry().trim() || signmaker.vm.entry()==signmaker.vm.newentry())?"disabled":"clickable",onclick: signmaker.vm.update},tt('updateEntry')),
-          m('div.cmd',{class: (!signmaker.vm.newentry().trim() || signmaker.vm.entry()==signmaker.vm.newentry())?"disabled":"clickable",onclick: signmaker.vm.insert},tt('saveNewEntry')),
-          m('div.cmd',{class: (!signmaker.vm.entry().trim())?"disabled":"clickable",onclick: signmaker.vm.delentry},tt('deleteEntry')),
+          m('div.cmd',{"class": (!signmaker.vm.newentry().trim())?"disabled":"clickable",onclick: signmaker.vm.new},tt('clearEntry')),
+          m('div.cmd',{"class": (!signmaker.vm.entry().trim() || signmaker.vm.entry()==signmaker.vm.newentry())?"disabled":"clickable",onclick: signmaker.vm.update},tt('updateEntry')),
+          m('div.cmd',{"class": (!signmaker.vm.newentry().trim() || signmaker.vm.entry()==signmaker.vm.newentry())?"disabled":"clickable",onclick: signmaker.vm.insert},tt('saveNewEntry')),
+          m('div.cmd',{"class": (!signmaker.vm.entry().trim())?"disabled":"clickable",onclick: signmaker.vm.delentry},tt('deleteEntry')),
         ]: m('div.cmdfull.clickable',{onclick: dictionary.vm.localCopy},m.trust(tt('localCopy')+tt('inBrowser'))),
-        m('div.cmdrow.info',tt('signLanguage')),
-        m('div.cmdrow',
+        (signmaker.vm.chars=="fsw")?m('div.cmdrow',
           m("p.fsw","FSW:"),
-          m("input",{id:"fsw",readOnly: !!langDictionary,value:ssw.norm(signmaker.vm.fsw()),oninput:m.withAttr("value",signmaker.vm.fsw)})
+          m("input",{"class": (signmaker.vm.fswraw && (signmaker.vm.fswraw != signmaker.vm.fswlive()))?'warning':'',id:"fsw",value:signmaker.vm.fswview(),oninput:m.withAttr("value",signmaker.vm.fswview)})
+        ):'',
+        m('div', {"class":(signmaker.vm.chars=="fsw")?'cmdrow':'cmdfull'},
+          m("p.swu","SWU:"),
+          m("input",{"class": (signmaker.vm.swuraw && (signmaker.vm.swuraw != signmaker.vm.swulive()))?'warning':'',id:"swu",value:signmaker.vm.swuview(),oninput:m.withAttr("value",signmaker.vm.swuview)})
         ),
         m('div.cmdrow.info',tt('spokenLanguage')),
         signmaker.vm.terms.map(function(term, index) {
@@ -803,15 +911,15 @@ signmaker.view = function(ctrl){
     case 2:
       currentTab = [
         m('div.cmdrow.info',tt('signLanguage')),
-        m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"S")},tt('sameSymbols')),
-        m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"SL")},tt('sameSymbolsLocation')),
-        m('div.cmd',{class: (signmaker.vm.sort.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"A")},tt('sameSymbolsSorted')),
-        m('div.cmd.clickable',{class: (palette.vm.dialing)?"checked":"unchecked",onclick: palette.vm.dial.bind(palette.vm,palette.vm.dialing?0:2)},[
+        m('div.cmd',{"class": (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"S")},tt('sameSymbols')),
+        m('div.cmd',{"class": (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"SL")},tt('sameSymbolsLocation')),
+        m('div.cmd',{"class": (signmaker.vm.sort.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"A")},tt('sameSymbolsSorted')),
+        m('div.cmd.clickable',{"class": (palette.vm.dialing)?"checked":"unchecked",onclick: palette.vm.dial.bind(palette.vm,palette.vm.dialing?0:2)},[
           tt('dial')
         ]),
-        m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"s")},tt('baseSymbols')),
-        m('div.cmd',{class: (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"sL")},tt('baseSymbolsLocation')),
-        m('div.cmd',{class: (signmaker.vm.sort.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"a")},tt('baseSymbolsSorted')),
+        m('div.cmd',{"class": (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"s")},tt('baseSymbols')),
+        m('div.cmd',{"class": (signmaker.vm.list.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"sL")},tt('baseSymbolsLocation')),
+        m('div.cmd',{"class": (signmaker.vm.sort.length==0)?"disabled":"clickable",onclick: signmaker.vm.search.bind(signmaker.vm,"a")},tt('baseSymbolsSorted')),
         m('div.cmd'),
         m('div.cmdrow.info',tt('spokenLanguage')),
         m('div.cmdrow',
@@ -821,18 +929,18 @@ signmaker.view = function(ctrl){
       break;
     case 3:
       currentTab = [
-        m('div.cmd',{class: (signmaker.vm.current()==4) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,4)},tt("pngImage")),
-        m('div.cmd',{class: (signmaker.vm.current()==5) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,5)},tt("svgImage")),
-        m('div.cmd',{class: (signmaker.vm.current()==6) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,6)},tt("preferences")),
-        m('div.cmd',{class: (signmaker.vm.current()==7) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,7)},tt("system")),
+        m('div.cmd',{"class": (signmaker.vm.current()==4) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,4)},tt("pngImage")),
+        m('div.cmd',{"class": (signmaker.vm.current()==5) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,5)},tt("svgImage")),
+        m('div.cmd',{"class": (signmaker.vm.current()==6) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,6)},tt("preferences")),
+        m('div.cmd',{"class": (signmaker.vm.current()==7) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,7)},tt("system")),
       ];
       break;
     case 4:
       currentTab = [
-        m('div.cmd',{class: (signmaker.vm.current()==4) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,4)},tt("pngImage")),
-        m('div.cmd',{class: (signmaker.vm.current()==5) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,5)},tt("svgImage")),
-        m('div.cmd',{class: (signmaker.vm.current()==6) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,6)},tt("preferences")),
-        m('div.cmd',{class: (signmaker.vm.current()==7) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,7)},tt("system")),
+        m('div.cmd',{"class": (signmaker.vm.current()==4) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,4)},tt("pngImage")),
+        m('div.cmd',{"class": (signmaker.vm.current()==5) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,5)},tt("svgImage")),
+        m('div.cmd',{"class": (signmaker.vm.current()==6) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,6)},tt("preferences")),
+        m('div.cmd',{"class": (signmaker.vm.current()==7) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,7)},tt("system")),
         m('div.cmdslim',tt('size')
         ),
         m('div.cmdslim',
@@ -879,10 +987,10 @@ signmaker.view = function(ctrl){
       break;
     case 5:
       currentTab = [
-        m('div.cmd',{class: (signmaker.vm.current()==4) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,4)},tt("pngImage")),
-        m('div.cmd',{class: (signmaker.vm.current()==5) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,5)},tt("svgImage")),
-        m('div.cmd',{class: (signmaker.vm.current()==6) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,6)},tt("preferences")),
-        m('div.cmd',{class: (signmaker.vm.current()==7) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,7)},tt("system")),
+        m('div.cmd',{"class": (signmaker.vm.current()==4) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,4)},tt("pngImage")),
+        m('div.cmd',{"class": (signmaker.vm.current()==5) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,5)},tt("svgImage")),
+        m('div.cmd',{"class": (signmaker.vm.current()==6) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,6)},tt("preferences")),
+        m('div.cmd',{"class": (signmaker.vm.current()==7) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,7)},tt("system")),
         m('div.cmdslim',tt('size')
         ),
         m('div.cmdslim',
@@ -919,7 +1027,15 @@ signmaker.view = function(ctrl){
         ),
         isApp?'':m('div.cmd.clickable',{onclick: signmaker.vm.dlsvg},tt('download')),
       ];
-      var svg = ssw.svg(ssw.norm(signmaker.vm.fsw())+ssw.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
+      var svg = ssw.svg(ssw.norm(signmaker.vm.fsw())+ssw.styling(signmaker.vm.styling()),{
+        size: signmaker.vm.size(),
+        pad: signmaker.vm.pad(),
+        line: signmaker.vm.linecolor(),
+        fill: signmaker.vm.fillcolor(),
+        back: signmaker.vm.backcolor(),
+        colorize: signmaker.vm.colorize(),
+        copy: (signmaker.vm.chars == "swu")?"opt":''
+      });
       editor = m('div',{id:"signbox"},
         m('div.mid',
           m.trust(svg)
@@ -928,18 +1044,18 @@ signmaker.view = function(ctrl){
       break;
     case 6:
       currentTab = [
-        m('div.cmd',{class: (signmaker.vm.current()==4) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,4)},tt("pngImage")),
-        m('div.cmd',{class: (signmaker.vm.current()==5) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,5)},tt("svgImage")),
-        m('div.cmd',{class: (signmaker.vm.current()==6) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,6)},tt("preferences")),
-        m('div.cmd',{class: (signmaker.vm.current()==7) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,7)},tt("system")),
+        m('div.cmd',{"class": (signmaker.vm.current()==4) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,4)},tt("pngImage")),
+        m('div.cmd',{"class": (signmaker.vm.current()==5) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,5)},tt("svgImage")),
+        m('div.cmd',{"class": (signmaker.vm.current()==6) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,6)},tt("preferences")),
+        m('div.cmd',{"class": (signmaker.vm.current()==7) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,7)},tt("system")),
         m('div.cmd.clickable',{onclick: function(){signmaker.vm.grid(0);localStorage['gridPref']=0;}},tt('grid0')),
         m('div.cmd.clickable',{onclick: function(){signmaker.vm.grid(1);localStorage['gridPref']=1;}},tt('grid1')),
         m('div.cmd.clickable',{onclick: function(){signmaker.vm.grid(2);localStorage['gridPref']=2;}},tt('grid2')),
-        m('div.cmd'),
+        m('div.cmd.clickable',{"class": (signmaker.vm.chars!="fsw")?'disabled':'', onclick: function(){setChars('fsw');}},tt('FSW')),
         m('div.cmd.clickable',{onclick: function(){setColoring('')}},tt('blackOnWhite')),
         m('div.cmd.clickable',{onclick: function(){setColoring('inverse')}},tt('whiteOnBlack')),
         m('div.cmd.clickable',{onclick: function(){setColoring('colorful')}},tt('colorful')),
-        m('div.cmd'),
+        m('div.cmd.clickable',{"class": (signmaker.vm.chars!="swu")?'disabled':'', onclick: function(){setChars('swu');}},tt('SWU')),
       ];
       break;
     case 7:
@@ -952,10 +1068,10 @@ signmaker.view = function(ctrl){
       });
       dictSignLang.sort();
       currentTab = [
-        m('div.cmd',{class: (signmaker.vm.current()==4) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,4)},tt("pngImage")),
-        m('div.cmd',{class: (signmaker.vm.current()==5) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,5)},tt("svgImage")),
-        m('div.cmd',{class: (signmaker.vm.current()==6) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,6)},tt("preferences")),
-        m('div.cmd',{class: (signmaker.vm.current()==7) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,7)},tt("system")),
+        m('div.cmd',{"class": (signmaker.vm.current()==4) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,4)},tt("pngImage")),
+        m('div.cmd',{"class": (signmaker.vm.current()==5) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,5)},tt("svgImage")),
+        m('div.cmd',{"class": (signmaker.vm.current()==6) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,6)},tt("preferences")),
+        m('div.cmd',{"class": (signmaker.vm.current()==7) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,7)},tt("system")),
         m('div.cmdslim',tt('userInterface')
         ),
         m('div.cmdlong',
@@ -993,11 +1109,11 @@ signmaker.view = function(ctrl){
             )
           )
         ),
-        m('div.cmd',{class: (!langDictionary)?"disabled":"clickable",onclick: (!!langDictionary)?dictionary.vm.localCopy:null},tt('localCopy')),
-        isApp?m('div.cmd'):m('div.cmd',{class: (!!langDictionary)?"disabled":"clickable",onclick: (!langDictionary)?dictionary.vm.refresh:null},tt('reloadDictionary')),
+        m('div.cmd',{"class": (!langDictionary)?"disabled":"clickable",onclick: (!!langDictionary)?dictionary.vm.localCopy:null},tt('localCopy')),
+        isApp?m('div.cmd'):m('div.cmd',{"class": (!!langDictionary)?"disabled":"clickable",onclick: (!langDictionary)?dictionary.vm.refresh:null},tt('reloadDictionary')),
         isApp?m('div.cmd'):m('div.cmd.clickable',{onclick: dictionary.vm.export},tt('exportDictionary')),
         m('div.cmd.clickable',{onclick: signmaker.vm.tab.bind(signmaker.vm,8)},tt("sourceDictionary")),
-        m('div.cmd',{class: (!!langDictionary)?"disabled":"clickable",onclick: (!langDictionary)?dictionary.vm.empty:null},tt('emptyDictionary')),
+        m('div.cmd',{"class": (!!langDictionary)?"disabled":"clickable",onclick: (!langDictionary)?dictionary.vm.empty:null},tt('emptyDictionary')),
       ]
       break;
     case 8:
@@ -1028,10 +1144,10 @@ signmaker.view = function(ctrl){
   return [
     editor,
     m('div',{id:"command"},[
-      m('div.cmd.edit',{class: (signmaker.vm.current()==0) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,0)},tt("editTab")),
-      m('div.cmd.dictionary',{class: (signmaker.vm.current()==1) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,1)},tt("dictionaryTab")),
-      m('div.cmd.search',{class: (signmaker.vm.current()==2) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,2)},tt("searchTab")),
-      m('div.cmd',{class: (signmaker.vm.current()>=3) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,3)},tt("moreTab")),
+      m('div.cmd.edit',{"class": (signmaker.vm.current()==0) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,0)},tt("editTab")),
+      m('div.cmd.dictionary',{"class": (signmaker.vm.current()==1) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,1)},tt("dictionaryTab")),
+      m('div.cmd.search',{"class": (signmaker.vm.current()==2) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,2)},tt("searchTab")),
+      m('div.cmd',{"class": (signmaker.vm.current()>=3) ? "selected" : "unselected",onclick: signmaker.vm.tab.bind(signmaker.vm,3)},tt("moreTab")),
       currentTab
       ])
     ]
@@ -1180,7 +1296,7 @@ palette.dial = function(level){
   }
   if (palette.vm.dialing) classes += ' smaller';
   return {
-    class: classes, 
+    "class": classes, 
     onclick: function(){
       palette.vm.dial(level);
       palette.vm.select()
@@ -1206,7 +1322,7 @@ palette.clear = function(){
 }
 palette.undo = function(){
   return {
-    class: palette.vm.dialhist.length || palette.vm.group?"clickable":"disabled",
+    "class": palette.vm.dialhist.length || palette.vm.group?"clickable":"disabled",
     onclick: function(){
       if (palette.vm.base){
         palette.vm.select(palette.vm.group);
@@ -1240,7 +1356,7 @@ palette.previous = function(){
 };
 palette.mirror = function(){
   return {
-    class: palette.vm.dialing==3?"smaller":'',
+    "class": palette.vm.dialing==3?"smaller":'',
     onclick: function(){
       palette.vm.select(palette.vm.group,palette.vm.base,!palette.vm.lower);
     }
@@ -1317,7 +1433,7 @@ palette.view = function(ctrl){
     ],
     palette.vm.mirror?m("div.btn",palette.mirror(),tt("mirror")):'',
     palette.vm.grid.map(function(row){
-      return m("div.row",{class:palette.vm.dialing?"smaller":''},row.map(function(key){
+      return m("div.row",{"class":palette.vm.dialing?"smaller":''},row.map(function(key){
         return m("div"
         , {
           title: tooltip?t(tooltip + key.slice(0,4)):'',

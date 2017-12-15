@@ -1,16 +1,17 @@
-SignMaker
+SignMaker 2017
 =====================
 - - - 
-> Version 1.4.0  
-August 2nd, 2017
+> Version 2.0.0  
+December 15th, 2017
 
-Write signs in any sign language with the SignWriting script using the [Sutton SignWriting Fonts]. 
+Write signs in any sign language with the SignWriting script using the [Sutton SignWriting Fonts].
 
 - - - 
 ## About
 SignMaker is a standards based editor, utilizing HTML, CSS, JavaScript, SVG, TrueType Fonts, and PNG images.  
 
-SignMaker is browser based without the need for a server connection.  It can be used online or it can be [downloaded][Download] and run directly from the user's computer.  An Android App is also available for [ARM][SignMakerARM] and [x86][SignMakerX86] processors.
+SignMaker is browser based without the need for a server connection.
+It can be used online or it can be [downloaded][Download] and run directly from the user's computer.
 
 The primary online website can be used to create a private dictionary in the browser's LocalStorage or view dozens of sign language dictionaries from around the world.
 * http://signbank.org/signmaker.html
@@ -21,6 +22,7 @@ The secondary online website can be used to create a private dictionary in the b
 - - -
 ## Features
 * TrueType fonts
+* Experimental Unicode
 * Multilingual user interface
 * Symbol Palette access to the entire International SignWriting Alphabet 2010
 * Drag and Drop sign construction 
@@ -37,18 +39,24 @@ The secondary online website can be used to create a private dictionary in the b
  2. Unzip source code on your computer.
  3. Open the index.html file in a browser.
 
-### Android
- 1. Navigate to Menu -> Settings -> Applications and check the box marked "Unknown Sources"
- 2. Download the SignMaker App: [ARM][SignMakerARM] or [x86][SignMakerX86].
- 3. Install the App
- 
 - - -
+### Sutton SignWriting Fonts
+The Sutton SignWriting TrueType fonts are available for download and installation.
+
+Installing the fonts using the instructions below is not required, but it will improve the user experience.
+If the fonts are not installed on the system, CSS declarations will install the fonts in the browser cache.  
+
+>Sutton SignWriting Fonts  
+Copyright (c) 1974-2017, Center for Sutton Movement Writing, inc  
+Licensed under the SIL Open Font License v1.1
+
 ## Help and Documentation
 Help and documentation is available online: http://signbank.org/signmaker.html
 
-Consider joining the [SignWriting List] for email discussion with writers from around the world.
+Consider joining [Sutton SignWriting on Facebook] or the [SignWriting Email List] for news and discussion with writers from around the world.
 
-If you wish to participate in SignMaker development, you can submit patches, fixes and new features through GitHub.  Questions, feedback, and ideas regarding SignMaker can be sent to slevin@signpuddle.net.
+If you wish to participate in SignMaker development, you can submit patches, fixes and new features through GitHub.
+Questions, feedback, and ideas regarding SignMaker can be sent to slevin@signpuddle.net.
 
 - - -
 ## Customization
@@ -128,9 +136,8 @@ Valerie Sutton (http://signwriting.org)
 ## Reference
 The Formal SignWriting character encoding used in SignMaker is defined in an Internet Draft submitted to the IETF: [draft-slevinski-formal-signwriting].
 The document is improved and resubmitted every 6 months.
-The character design has been stable since January 12, 2012.
-The current version of the Internet Draft is 05.
-The next version is planned for November 2015.
+The ASCII character design has been stable since January 12, 2012.
+The Unicode character design has been stable since July 14, 2017.
 
 - - -
 
@@ -151,6 +158,7 @@ MIT
 - - - 
 
 ## Version History
+* 2.0.0 - Dec 15th, 2017: update for SignWriting in Unicode (SWU)
 * 1.4.0 - Aug 2nd, 2017: update for SuttonSignWritingLine font
 * 1.3.3 - Feb 10th, 2017: SuttonSignWriting.min.js v1.1.1
 * 1.3.2 - Nov 11th, 2015: sw10.js v1.7.0
@@ -172,10 +180,10 @@ MIT
 [sb-alphabet]: http://signbank.org/signmaker/config/alphabet
 [sb-dictionary]: http://signbank.org/signmaker/config/dictionary
 [Sutton SignWriting JavaScript Library]: https://slevinski.github.io/SuttonSignWriting/guide.html#js
+[SignWriting Email List]: http://listserv.valenciacollege.edu/cgi-bin/wa?SUBED1=SW-L&A=1
 [MIT]: http://www.opensource.org/licenses/mit-license.php
 [Draggabilly]: http://draggabilly.desandro.com/
 [Mithril]: https://lhorie.github.io/mithril/
 [Translate]: https://github.com/musterknabe/translate.js
 [Download]: https://github.com/Slevinski/signmaker/archive/gh-pages.zip
-[SignMakerARM]: http://signbank.org/downloads/SignMakerApp.arm.apk
-[SignMakerX86]: http://signbank.org/downloads/SignMakerApp.x86.apk
+

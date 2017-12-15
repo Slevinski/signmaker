@@ -1,0 +1,28 @@
+body, html {
+  margin: 0;
+  background: gray;
+  height: 100%;
+  text-align: center;
+  color: #fff;
+}
+::selection {background: rgba(0,0,0,0.3);}
+
+img {
+  display: inline;
+  float: left;
+  width: 20%;
+  padding: 2%;
+}
+
+h1 {
+  display: inline;
+  float: right;
+  width:80%;
+  font-size: 3em;
+  text-shadow: 0.02em 0.05em red;
+  top: 0; right: 0; bottom: 0; left: 0;
+}
+@media (max-width: 500px) {
+  h1 {font-size:2em}
+}
+

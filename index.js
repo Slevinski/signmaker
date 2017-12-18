@@ -1,5 +1,5 @@
 /**
-* SignMaker v2
+* SignMaker v2.0.2
 * https://github.com/Slevinski/signmaker
 * Copyright (c) 2007-2017, Stephen E Slevinski Jr
 * SignMaker is released under the MIT License.
@@ -503,7 +503,7 @@ signmaker.vm = {
     return (ssw.norm(signmaker.vm.fsw()) + '\t' + signmaker.vm.terms.join('\t')).replace(/\t\t/g, '').trim();	
   },
   dlpng: function(){
-    var canvas = ssw.canvas(ssw.norm(signmaker.vm.fsw())+ssw.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
+    var canvas = ssw.canvas(signmaker.vm.fswnorm()+signmaker.vm.styling(),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
     var data = canvas.toDataURL("image/png");
     var link = document.getElementById('downloadlink');
     link.href = data;
@@ -511,7 +511,7 @@ signmaker.vm = {
     link.click();    
   },
   dlsvg: function(){
-    var svg = ssw.svg(ssw.norm(signmaker.vm.fsw())+ssw.styling(signmaker.vm.styling()),{
+    var svg = ssw.svg(signmaker.vm.fswnorm()+signmaker.vm.styling(),{
       size: signmaker.vm.size(),
       pad: signmaker.vm.pad(),
       line: signmaker.vm.linecolor(), 
@@ -977,7 +977,7 @@ signmaker.view = function(ctrl){
         ),
         isApp?'':m('div.cmd.clickable',{onclick: signmaker.vm.dlpng},tt('download')),
       ];
-      var canvas = ssw.canvas(ssw.norm(signmaker.vm.fsw())+ssw.styling(signmaker.vm.styling()),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
+      var canvas = ssw.canvas(signmaker.vm.fswnorm()+signmaker.vm.styling(),{size: signmaker.vm.size(), pad: signmaker.vm.pad(), line: signmaker.vm.linecolor(), fill: signmaker.vm.fillcolor(), back: signmaker.vm.backcolor(), colorize: signmaker.vm.colorize()});
       var data = canvas?canvas.toDataURL("image/png"):"";
       editor = m('div',{id:"signbox"},
         m('div.mid',
@@ -1027,7 +1027,7 @@ signmaker.view = function(ctrl){
         ),
         isApp?'':m('div.cmd.clickable',{onclick: signmaker.vm.dlsvg},tt('download')),
       ];
-      var svg = ssw.svg(ssw.norm(signmaker.vm.fsw())+ssw.styling(signmaker.vm.styling()),{
+      var svg = ssw.svg(signmaker.vm.fswnorm()+signmaker.vm.styling(),{
         size: signmaker.vm.size(),
         pad: signmaker.vm.pad(),
         line: signmaker.vm.linecolor(),

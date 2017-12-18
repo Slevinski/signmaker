@@ -158,6 +158,7 @@ MIT
 - - - 
 
 ## Version History
+* 2.0.3 - Dec 18th, 2017: fix fswnorm
 * 2.0.2 - Dec 18th, 2017: fix image output
 * 2.0.1 - Dec 15th, 2017: version string for JS file references
 * 2.0.0 - Dec 15th, 2017: update for SignWriting in Unicode (SWU)

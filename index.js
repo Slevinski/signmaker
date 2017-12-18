@@ -1,5 +1,5 @@
 /**
-* SignMaker v2.0.3
+* SignMaker v2.0.4
 * https://github.com/Slevinski/signmaker
 * Copyright (c) 2007-2017, Stephen E Slevinski Jr
 * SignMaker is released under the MIT License.
@@ -457,7 +457,7 @@ signmaker.vm = {
         fsw = signmaker.vm.fswraw;
       }
     } else {
-      fsw = signmaker.vm.fswraw || signmaker.vm.fswlive();
+      fsw = signmaker.vm.fswraw || signmaker.vm.fswnorm();
     }
     return fsw;
   },
@@ -485,7 +485,7 @@ signmaker.vm = {
         swu = signmaker.vm.swuraw;
       }
     } else {
-      swu = signmaker.vm.swuraw || signmaker.vm.swulive();
+      swu = signmaker.vm.swuraw || signmaker.vm.swunorm();
     }
     return swu;
   },

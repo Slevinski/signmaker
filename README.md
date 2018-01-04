@@ -1,8 +1,8 @@
 SignMaker 2017
 =====================
 - - - 
-> Version 2.0.2  
-December 18th, 2017
+> Version 2.0.5  
+January 4th, 2018
 
 Write signs in any sign language with the SignWriting script using the [Sutton SignWriting Fonts].
 
@@ -158,6 +158,7 @@ MIT
 - - - 
 
 ## Version History
+* 2.0.5 - Jan 4th, 2018: fix safari object eval 
 * 2.0.4 - Dec 18th, 2017: fix fswview and swuview
 * 2.0.3 - Dec 18th, 2017: fix fswnorm
 * 2.0.2 - Dec 18th, 2017: fix image output

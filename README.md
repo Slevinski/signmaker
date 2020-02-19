@@ -1,8 +1,11 @@
 SignMaker 2017
 =====================
 - - - 
-> Version 2.0.5  
-January 4th, 2018
+> Version 2.1.0  
+February 19th, 2020
+
+> AUTHOR: https://SteveSlevinski.me  
+> SUPPORT: https://www.patreon.com/signwriting
 
 Write signs in any sign language with the SignWriting script using the [Sutton SignWriting Fonts].
 
@@ -122,14 +125,14 @@ The [Sutton SignWriting JavaScript Library] provides support for SignWriting ima
 - - -
 ## Author
 
-Stephen E Slevinski Jr  
-slevin@signpuddle.net  
-http://signpuddle.net  
-http://signpuddle.com  
+Steve Slevinski  
+https://SteveSlevinski.me
 
 - - -
 ## Special Thanks
-Valerie Sutton (http://signwriting.org)
+
+Valerie Sutton  
+https://ValerieSutton.org
 
 - - - 
 
@@ -158,6 +161,7 @@ MIT
 - - - 
 
 ## Version History
+* 2.1.0 - Feb 19th, 2020: font cdn update to unpkg 
 * 2.0.5 - Jan 4th, 2018: fix safari object eval 
 * 2.0.4 - Dec 18th, 2017: fix fswview and swuview
 * 2.0.3 - Dec 18th, 2017: fix fswnorm
